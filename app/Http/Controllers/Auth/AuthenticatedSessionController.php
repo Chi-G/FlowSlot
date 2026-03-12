@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     #[OA\Post(
-        path: '/login',
+        path: '/admin/login',
         operationId: 'login',
         tags: ['Auth'],
         summary: 'Log in a user',
@@ -63,7 +63,7 @@ class AuthenticatedSessionController extends Controller
      * Destroy an authenticated session.
      */
     #[OA\Post(
-        path: '/logout',
+        path: '/admin/logout',
         operationId: 'logout',
         tags: ['Auth'],
         summary: 'Log out the current user',

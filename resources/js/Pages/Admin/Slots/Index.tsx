@@ -30,7 +30,7 @@ export default function Index({ services }: Props) {
 
     return (
         <AdminLayout title="Generate Time Slots">
-            <div className="max-w-3xl">
+            <div className="max-w-6xl">
                 <Link href={route('admin.dashboard')} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 mb-6">
                     <ChevronLeft size={16} /> Back to dashboard
                 </Link>

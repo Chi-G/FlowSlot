@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Link, router } from '@inertiajs/react';
-import { Plus, Edit2, Trash2, MoreVertical, Eye } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { Plus, Edit2, Trash2, MoreVertical, Eye, Search, X } from 'lucide-react';
 import StatusBadge from '@/Components/StatusBadge';
 import Button from '@/Components/Button';
+import ConfirmationModal from '@/Components/ConfirmationModal';
+import TextInput from '@/Components/TextInput';
 
 interface Service {
     id: number;
@@ -17,29 +19,95 @@ interface Service {
 
 interface Props {
     services: Service[];
+    filters: {
+        search: string;
+    };
 }
 
-export default function Index({ services }: Props) {
+export default function Index({ services, filters }: Props) {
+    const [search, setSearch] = useState(filters.search || '');
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [serviceToDelete, setServiceToDelete] = useState<number | null>(null);
+
+    // Debounced search
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (search !== (filters.search || '')) {
+                router.get(
+                    route('admin.services.index'),
+                    { search: search },
+                    { preserveState: true, replace: true }
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [search]);
+
     const handleDelete = (id: number) => {
-        if (confirm('Are you sure you want to delete this service? All associated slots will be affected.')) {
-            router.delete(route('admin.services.destroy', id));
+        setServiceToDelete(id);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = () => {
+        if (serviceToDelete) {
+            router.delete(route('admin.services.destroy', serviceToDelete), {
+                onFinish: () => {
+                    setShowDeleteModal(false);
+                    setServiceToDelete(null);
+                }
+            });
         }
     };
 
     return (
         <AdminLayout title="Services Management">
+            <ConfirmationModal
+                show={showDeleteModal}
+                title="Delete Service?"
+                description="Are you sure you want to delete this service? This action cannot be undone and will affect all scheduled slots."
+                confirmText="Delete Service"
+                variant="danger"
+                onClose={() => {
+                    setShowDeleteModal(false);
+                    setServiceToDelete(null);
+                }}
+                onConfirm={confirmDelete}
+            />
+
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900">Enterprise Services</h2>
                         <p className="text-sm text-slate-500 font-medium">Manage your professional service offerings and pricing.</p>
                     </div>
-                    <Link href={route('admin.services.create')}>
-                        <Button className="gap-2">
-                            <Plus size={18} />
-                            Add New Service
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <div className="relative w-full md:w-64 group">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
+                                <Search size={16} />
+                            </div>
+                            <TextInput
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Search services..."
+                                className="pl-10 h-10 w-full bg-white border-slate-200"
+                            />
+                            {search && (
+                                <button 
+                                    onClick={() => setSearch('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                >
+                                    <X size={14} />
+                                </button>
+                            )}
+                        </div>
+                        <Link href={route('admin.services.create')}>
+                            <Button className="gap-2 h-10 whitespace-nowrap">
+                                <Plus size={18} />
+                                Add New
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
@@ -58,7 +126,7 @@ export default function Index({ services }: Props) {
                                 {services.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
-                                            No services found. Start by adding your first service.
+                                            {search ? 'No services match your search.' : 'No services found. Start by adding your first service.'}
                                         </td>
                                     </tr>
                                 ) : (

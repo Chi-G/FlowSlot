@@ -44,7 +44,7 @@ export default function PublicLayout({ children, title }: Props) {
                             >
                                 Services
                             </Link>
-                            <Link href="/login" className="rounded-full bg-slate-900 px-6 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-all shadow-md active:scale-95">
+                            <Link href={route('login')} className="rounded-full bg-slate-900 px-6 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-all shadow-md active:scale-95">
                                 Admin Portal
                             </Link>
                         </div>
@@ -68,7 +68,7 @@ export default function PublicLayout({ children, title }: Props) {
                     <div className="flex flex-col gap-4 p-4">
                         <Link href="/" className="text-lg font-medium text-slate-600">Home</Link>
                         <Link href={route('services')} className="text-lg font-medium text-slate-600">Services</Link>
-                        <Link href="/login" className="rounded-lg bg-indigo-600 p-3 text-center text-white font-semibold">Admin Portal</Link>
+                        <Link href={route('login')} className="rounded-lg bg-indigo-600 p-3 text-center text-white font-semibold">Admin Portal</Link>
                     </div>
                 </motion.div>
             </nav>

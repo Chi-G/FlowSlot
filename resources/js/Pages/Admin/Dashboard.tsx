@@ -76,9 +76,12 @@ export default function Dashboard({ stats, todayBookings }: Props) {
                     <div className="lg:col-span-2 rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
                         <div className="flex items-center justify-between p-6 border-b border-slate-50">
                             <h3 className="text-lg font-bold text-slate-900">Today's Appointments</h3>
-                            <button className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                            <Link 
+                                href={route('admin.appointments.index')} 
+                                className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                            >
                                 View All <ArrowUpRight size={16} />
-                            </button>
+                            </Link>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">

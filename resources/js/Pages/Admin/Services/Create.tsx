@@ -21,7 +21,7 @@ export default function Create() {
 
     return (
         <AdminLayout title="Add New Service">
-            <div className="max-w-3xl">
+            <div className="max-w-5xl">
                 <Link href={route('admin.services.index')} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 mb-6">
                     <ChevronLeft size={16} /> Back to services
                 </Link>
@@ -34,7 +34,7 @@ export default function Create() {
                                 <input 
                                     type="text"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
                                     placeholder="Executive Strategy Session"
                                     value={data.name}
                                     onChange={e => setData('name', e.target.value)}
@@ -47,7 +47,7 @@ export default function Create() {
                                 <textarea 
                                     required
                                     rows={4}
-                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
                                     placeholder="Describe the value of this service..."
                                     value={data.description}
                                     onChange={e => setData('description', e.target.value)}
@@ -61,7 +61,7 @@ export default function Create() {
                                     type="number"
                                     required
                                     min="5"
-                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
                                     value={data.duration_minutes}
                                     onChange={e => setData('duration_minutes', parseInt(e.target.value))}
                                 />
@@ -75,7 +75,7 @@ export default function Create() {
                                     required
                                     min="0"
                                     step="0.01"
-                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
                                     value={data.price}
                                     onChange={e => setData('price', parseFloat(e.target.value))}
                                 />
@@ -93,7 +93,7 @@ export default function Create() {
                                     />
                                     <input 
                                         type="text"
-                                        className="flex-1 px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono"
+                                        className="flex-1 px-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono shadow-sm"
                                         value={data.color_code}
                                         onChange={e => setData('color_code', e.target.value)}
                                     />

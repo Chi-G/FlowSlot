@@ -21,10 +21,20 @@ class ServiceController extends Controller
             new OA\Response(response: 200, description: 'Successful operation')
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+        
+        $services = Service::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+        })->get();
+
         return Inertia::render('Admin/Services/Index', [
-            'services' => Service::all(),
+            'services' => $services,
+            'filters' => [
+                'search' => $search
+            ]
         ]);
     }
 

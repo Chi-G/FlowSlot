@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { Head, Link, usePage } from '@inertiajs/react';
+import React, { ReactNode, useState } from 'react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import ApplicationLogo from '../Components/ApplicationLogo';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import ConfirmationModal from '../Components/ConfirmationModal';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -28,7 +29,8 @@ interface Props {
 
 export default function AdminLayout({ children, title }: Props) {
     const { auth } = usePage().props as any;
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     const menuItems = [
         { label: 'Dashboard', icon: LayoutDashboard, href: route('admin.dashboard') },
@@ -39,9 +41,23 @@ export default function AdminLayout({ children, title }: Props) {
         { label: 'Appointments', icon: Calendar, href: route('admin.appointments.index') },
     ];
 
+    const handleLogout = () => {
+        router.post(route('logout'));
+    };
+
     return (
         <div className="flex min-h-screen bg-slate-50 font-sans text-slate-900">
             <Head title={title ? `${title} | Admin FlowSlot` : 'FlowSlot Admin'} />
+
+            <ConfirmationModal
+                show={showLogoutModal}
+                title="End session?"
+                description="Are you sure you want to log out of the admin portal?"
+                confirmText="Log Out"
+                variant="primary"
+                onClose={() => setShowLogoutModal(false)}
+                onConfirm={handleLogout}
+            />
 
             {/* Sidebar */}
             <aside 
@@ -93,9 +109,12 @@ export default function AdminLayout({ children, title }: Props) {
                                 <p className="text-xs font-semibold truncate">{auth.user.name}</p>
                                 <p className="text-[10px] text-slate-500 truncate">{auth.user.email}</p>
                             </div>
-                            <Link href="/logout" method="post" as="button" className="text-slate-400 hover:text-rose-500 transition-colors">
+                            <button 
+                                onClick={() => setShowLogoutModal(true)}
+                                className="text-slate-400 hover:text-rose-500 transition-colors"
+                            >
                                 <LogOut size={16} />
-                            </Link>
+                            </button>
                         </div>
                     )}
                 </div>

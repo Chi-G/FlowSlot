@@ -35,4 +35,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('/slots/generate', [\App\Http\Controllers\Admin\SlotGeneratorController::class, 'store'])->name('slots.store');
 });
 
-require __DIR__.'/auth.php';
+Route::prefix('admin')->group(function () {
+    require __DIR__.'/auth.php';
+});

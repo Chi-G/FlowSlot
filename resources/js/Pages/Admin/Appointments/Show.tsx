@@ -49,7 +49,7 @@ export default function Show({ appointment }: Props) {
 
     return (
         <AdminLayout title={`Booking ${appointment.reference_number}`}>
-            <div className="max-w-5xl">
+            <div className="max-w-7xl">
                 <Link href={route('admin.appointments.index')} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 mb-8">
                     <ChevronLeft size={16} /> Back to appointments
                 </Link>
