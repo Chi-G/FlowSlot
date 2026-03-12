@@ -1,59 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FlowSlot - Enterprise Appointment Booking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+FlowSlot is a premium, enterprise-grade scheduling platform designed for efficiency and seamless user experience. Manage bookings, services, and customer notifications in one beautifully designed workspace.
 
-## About Laravel
+**[Live Demo: flowslot.forahia.org.ng](https://flowslot.forahia.org.ng)**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Key Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Dynamic Booking**: User-friendly interface for selecting services and time slots.
+- **Admin Dashboard**: Comprehensive management of appointments, services, and slot generation.
+- **Real-time Notifications**: Automated email confirmations and updates.
+- **Enterprise Security**: Role-based access control and restricted administrative functions.
+- **Modern UI**: Built with Framer Motion for smooth transitions and a premium feel.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- **Backend**: Laravel 12 (PHP 8.3)
+- **Frontend**: Inertia.js, React 18, Tailwind CSS
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Build Tool**: Vite
+- **Database**: MySQL
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## System Architecture & Documentation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### System Overview
+FlowSlot leverages the powerful combination of Laravel and React via Inertia.js to provide a single-page application experience with the robust security and routing of a traditional backend.
 
-## Laravel Sponsors
+### Services & Components
+- **Booking Engine**: Manages slot availability and prevents double-booking.
+- **Notification Service**: Handles email dispatch via SMTP (Mailtrap/Live).
+- **Admin Portal**: Restricted area for service and appointment management.
+- **Queue System**: Asynchronous processing of intensive tasks (like generating slots).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Data Flow
+```mermaid
+graph TD
+    User([Public User]) -->|Selects Service| BookingFlow[Booking Page]
+    BookingFlow -->|Selects Slot| Confirm[Confirmation Page]
+    Confirm -->|Submit| Store[Booking Controller]
+    Store -->|Save| DB[(Appointments Table)]
+    Store -->|Dispatch| Notify[Notification System]
+    Notify -->|Send Email| User
+    Notify -->|Alert| Admin[Admin Dashboard]
+```
 
-### Premium Partners
+### Queue Flow
+```mermaid
+sequenceDiagram
+    participant U as Admin User
+    participant C as SlotGeneratorController
+    participant Q as Database/Redis Queue
+    participant J as GenerateSlotsJob
+    participant D as DB (TimeSlots)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+    U->>C: POST /admin/slots/generate
+    C->>Q: Dispatch GenerateSlotsJob
+    C-->>U: 200 OK (Processing Started)
+    Q->>J: Execute Job
+    J->>D: Bulk Insert Time Slots
+```
 
-## Contributing
+### Reliability & Infrastructure
+- **Webhook Handling**: Designed with idempotency in mind for future payment integrations (Stripe/Paystack).
+- **CI/CD**: Fully automated deployment pipeline via GitHub Actions to WhoGoHost.
+- **Data Integrity**: Atomic database transactions for booking confirmations to ensure consistency.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Getting Started
 
-## Code of Conduct
+### Prerequisites
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP 8.3+
+- Composer
+- Node.js & NPM
 
-## Security Vulnerabilities
+### Installation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Clone the repository
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+3. Install JS dependencies:
+   ```bash
+   npm install
+   ```
+4. Configure `.env` (Database, Mail, App URL).
+5. Build assets:
+   ```bash
+   npm run build
+   ```
+6. Run migrations:
+   ```bash
+   php artisan migrate
+   ```
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Documentation
+For full API documentation and architectural patterns, please refer to the `.docs` folder (coming soon).
