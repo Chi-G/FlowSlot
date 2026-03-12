@@ -23,8 +23,8 @@ export default function PublicLayout({ children, title }: Props) {
             <Head title={title ? `${title} | FlowSlot` : 'FlowSlot - Smart Booking'} />
 
             {/* Navigation */}
-            <nav className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
-                <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12">
+            <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/20 bg-white/40 backdrop-blur-2xl">
+                <div className="mx-auto max-w-[1800px] px-6 sm:px-12 lg:px-20">
                     <div className="flex h-16 justify-between items-center">
                         <Link href="/" className="flex items-center gap-3 group">
                             <ApplicationLogo className="h-10 w-auto rounded-lg shadow-sm transition-transform group-hover:scale-105" />
@@ -83,7 +83,7 @@ export default function PublicLayout({ children, title }: Props) {
             </nav>
 
             {/* Main Content */}
-            <main className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-12">
+            <main className="pt-16">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -93,13 +93,6 @@ export default function PublicLayout({ children, title }: Props) {
                     {children}
                 </motion.div>
             </main>
-
-            {/* Footer */}
-            <footer className="mt-20 border-t border-slate-200 bg-white py-12">
-                <div className="mx-auto max-w-[1600px] px-4 text-center text-slate-500">
-                    <p className="text-sm">© {new Date().getFullYear()} FlowSlot Enterprise. All rights reserved.</p>
-                </div>
-            </footer>
         </div>
     );
 }
