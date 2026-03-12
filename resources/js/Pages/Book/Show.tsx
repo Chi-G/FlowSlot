@@ -158,30 +158,48 @@ export default function Show({ service }: Props) {
                             <div className="grid grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-1">
                                 <AnimatePresence mode="wait">
                                     {isLoadingSlots ? (
-                                        <div className="col-span-2 py-12 text-center text-slate-400">
+                                        <motion.div 
+                                            key="loading"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="col-span-2 py-12 text-center text-slate-400"
+                                        >
                                             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
-                                        </div>
+                                        </motion.div>
                                     ) : slots.length === 0 ? (
-                                        <div className="col-span-2 py-12 text-center text-slate-400 bg-slate-50 rounded-xl">
+                                        <motion.div 
+                                            key="empty"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="col-span-2 py-12 text-center text-slate-400 bg-slate-50 rounded-xl"
+                                        >
                                             <Info size={32} className="mx-auto mb-2 opacity-20" />
                                             <p className="text-sm font-medium">No slots found for this date</p>
-                                        </div>
+                                        </motion.div>
                                     ) : (
-                                        slots.map((slot) => (
-                                            <motion.button
-                                                key={slot.id}
-                                                initial={{ opacity: 0, scale: 0.95 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                onClick={() => setSelectedSlot(slot)}
-                                                className={`rounded-xl border-2 py-3 px-2 text-sm font-bold transition-all ${
-                                                    selectedSlot?.id === slot.id
-                                                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                                                        : 'border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30 text-slate-600'
-                                                }`}
-                                            >
-                                                {format(new Date(slot.start_time), 'h:mm a')}
-                                            </motion.button>
-                                        ))
+                                        <motion.div 
+                                            key="slots-grid"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="col-span-2 grid grid-cols-2 gap-3"
+                                        >
+                                            {slots.map((slot) => (
+                                                <button
+                                                    key={slot.id}
+                                                    onClick={() => setSelectedSlot(slot)}
+                                                    className={`rounded-xl border-2 py-3 px-2 text-sm font-bold transition-all ${
+                                                        selectedSlot?.id === slot.id
+                                                            ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                                                            : 'border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/30 text-slate-600'
+                                                    }`}
+                                                >
+                                                    {format(new Date(slot.start_time), 'h:mm a')}
+                                                </button>
+                                            ))}
+                                        </motion.div>
                                     )}
                                 </AnimatePresence>
                             </div>

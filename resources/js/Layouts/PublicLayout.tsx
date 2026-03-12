@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, CheckCircle2, Menu, X } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -34,16 +34,7 @@ export default function PublicLayout({ children, title }: Props) {
                         </Link>
 
                         {/* Desktop Nav */}
-                        <div className="hidden md:flex items-center gap-8">
-                            <Link 
-                                href="/" 
-                                className={cn(
-                                    "text-sm font-medium transition-colors",
-                                    usePage().url === '/' ? "text-indigo-600 font-bold" : "text-slate-600 hover:text-indigo-600"
-                                )}
-                            >
-                                Home
-                            </Link>
+                        <div className="hidden md:flex items-center gap-8">                           
                             <Link 
                                 href={route('services')} 
                                 className={cn(
@@ -84,14 +75,17 @@ export default function PublicLayout({ children, title }: Props) {
 
             {/* Main Content */}
             <main className="pt-16">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                >
-                    {children}
-                </motion.div>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={usePage().url}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        {children}
+                    </motion.div>
+                </AnimatePresence>
             </main>
         </div>
     );

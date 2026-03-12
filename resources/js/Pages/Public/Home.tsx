@@ -200,72 +200,7 @@ export default function Home() {
                             </div>
                         </motion.div>
                     </div>
-                </section>
-
-                {/* Stats & Trust */}
-                <section className="py-24 bg-white">
-                    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-                            {[
-                                { label: 'Annual Events', value: '1.2M+', icon: Activity },
-                                { label: 'Active Teams', value: '12k+', icon: Users },
-                                { label: 'Uptime', value: '99.99%', icon: Globe },
-                                { label: 'Satisfaction', value: '4.95/5', icon: Star },
-                            ].map((stat, idx) => (
-                                <motion.div
-                                    key={stat.label}
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className="text-center"
-                                >
-                                    <div className="inline-flex items-center justify-center p-4 rounded-3xl bg-slate-50 text-slate-400 mb-6 group-hover:text-indigo-600 transition-colors">
-                                        <stat.icon size={32} />
-                                    </div>
-                                    <h4 className="text-5xl font-black text-slate-900 mb-2">{stat.value}</h4>
-                                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Final CTA */}
-                <section className="py-32 px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="max-w-7xl mx-auto rounded-[4rem] bg-slate-900 p-12 lg:p-24 text-center text-white relative overflow-hidden"
-                    >
-                        <div className="relative z-10">
-                            <h2 className="text-4xl lg:text-7xl font-black mb-8 leading-tight tracking-tight">
-                                Ready to scale <br /> your <span className="text-indigo-400">productivity</span>?
-                            </h2>
-                            <p className="text-xl lg:text-2xl text-slate-400 font-medium mb-12 max-w-2xl mx-auto">
-                                Deploy FlowSlot across your organization and experience the power of automated, enterprise-grade scheduling.
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                                <Link href={route('services')}>
-                                    <Button className="h-20 px-12 text-2xl rounded-3xl shadow-[0_20px_60px_rgba(79,70,229,0.3)] group">
-                                        Get Started Free
-                                        <ArrowRight className="ml-3 group-hover:translate-x-3 transition-transform" />
-                                    </Button>
-                                </Link>
-                                <Link href="/login">
-                                    <Button variant="outline" className="h-20 px-12 text-2xl rounded-3xl border-slate-700 text-white hover:bg-slate-800">
-                                        View Dashboard
-                                    </Button>
-                                </Link>
-                            </div>
-                        </div>
-                        
-                        {/* Visual Decorations */}
-                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.15),transparent_50%)]" />
-                        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(52,211,153,0.1),transparent_50%)]" />
-                    </motion.div>
-                </section>
+                </section>                
 
                 {/* Modern Footer */}
                 <footer className="border-t border-slate-200 pt-16 pb-8 bg-white">
