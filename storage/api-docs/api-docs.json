@@ -19,6 +19,259 @@
         }
     ],
     "paths": {
+        "/admin/services": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "List all services managed by admin",
+                "operationId": "listServices",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new service",
+                "operationId": "createService",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "description",
+                                    "duration_minutes",
+                                    "price",
+                                    "color_code"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "duration_minutes": {
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "color_code": {
+                                        "type": "string"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Service created successfully"
+                    }
+                }
+            }
+        },
+        "/admin/services/{service}": {
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update an existing service",
+                "operationId": "updateService",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "duration_minutes": {
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "color_code": {
+                                        "type": "string"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Service updated successfully"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a service",
+                "operationId": "deleteService",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service deleted successfully"
+                    }
+                }
+            }
+        },
+        "/admin/slots/generate": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Bulk generate time slots for a service",
+                "operationId": "generateSlots",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "service_id",
+                                    "start_date",
+                                    "end_date",
+                                    "start_time",
+                                    "end_time",
+                                    "interval_minutes"
+                                ],
+                                "properties": {
+                                    "service_id": {
+                                        "type": "integer"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "start_time": {
+                                        "type": "string"
+                                    },
+                                    "end_time": {
+                                        "type": "string"
+                                    },
+                                    "interval_minutes": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Slots generated successfully"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log in a user",
+                "description": "Handle an incoming authentication request.",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "remember": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Logged in successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log out the current user",
+                "description": "Destroy an authenticated session.",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully"
+                    }
+                }
+            }
+        },
         "/api/services": {
             "get": {
                 "tags": [
@@ -32,12 +285,253 @@
                     }
                 }
             }
+        },
+        "/book/{service}": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get service booking page details",
+                "operationId": "getServiceDetails",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/slots/{service}": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get available time slots for a service",
+                "operationId": "getAvailableSlots",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/book/confirm/{service}/{slot}": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get booking confirmation page details",
+                "operationId": "getConfirmationDetails",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "slot",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/book": {
+            "post": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Book a new appointment",
+                "operationId": "bookAppointment",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "service_id",
+                                    "time_slot_id",
+                                    "customer_name",
+                                    "customer_email"
+                                ],
+                                "properties": {
+                                    "service_id": {
+                                        "type": "integer"
+                                    },
+                                    "time_slot_id": {
+                                        "type": "integer"
+                                    },
+                                    "customer_name": {
+                                        "type": "string"
+                                    },
+                                    "customer_email": {
+                                        "type": "string"
+                                    },
+                                    "customer_phone": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Appointment booked successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/booking/{reference}": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get appointment success details by reference",
+                "operationId": "getBookingSuccess",
+                "parameters": [
+                    {
+                        "name": "reference",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "delete": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Delete user's account",
+                "description": "Delete the user's account.",
+                "operationId": "deleteAccount",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account deleted successfully"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Update user's profile information",
+                "description": "Update the user's profile information.",
+                "operationId": "updateProfile",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile updated successfully"
+                    }
+                }
+            }
         }
     },
     "tags": [
         {
+            "name": "Admin",
+            "description": "Admin"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
             "name": "Public",
             "description": "Public"
+        },
+        {
+            "name": "Profile",
+            "description": "Profile"
         }
     ]
 }

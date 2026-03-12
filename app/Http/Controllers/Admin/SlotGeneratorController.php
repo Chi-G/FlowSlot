@@ -9,6 +9,8 @@ use App\Models\Service;
 use App\Services\TimeSlotGenerator;
 use Inertia\Inertia;
 
+use OpenApi\Attributes as OA;
+
 class SlotGeneratorController extends Controller
 {
     public function index()
@@ -18,6 +20,29 @@ class SlotGeneratorController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: '/admin/slots/generate',
+        operationId: 'generateSlots',
+        tags: ['Admin'],
+        summary: 'Bulk generate time slots for a service',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['service_id', 'start_date', 'end_date', 'start_time', 'end_time', 'interval_minutes'],
+                properties: [
+                    new OA\Property(property: 'service_id', type: 'integer'),
+                    new OA\Property(property: 'start_date', type: 'string', format: 'date'),
+                    new OA\Property(property: 'end_date', type: 'string', format: 'date'),
+                    new OA\Property(property: 'start_time', type: 'string'),
+                    new OA\Property(property: 'end_time', type: 'string'),
+                    new OA\Property(property: 'interval_minutes', type: 'integer')
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Slots generated successfully')
+        ]
+    )]
     public function store(Request $request, TimeSlotGenerator $generator)
     {
         $validated = $request->validate([

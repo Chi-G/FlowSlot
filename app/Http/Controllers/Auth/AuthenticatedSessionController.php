@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use OpenApi\Attributes as OA;
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -27,6 +29,27 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
+    #[OA\Post(
+        path: '/login',
+        operationId: 'login',
+        tags: ['Auth'],
+        summary: 'Log in a user',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'password'],
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', format: 'email'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password'),
+                    new OA\Property(property: 'remember', type: 'boolean')
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Logged in successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized')
+        ]
+    )]
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
@@ -39,6 +62,15 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
+    #[OA\Post(
+        path: '/logout',
+        operationId: 'logout',
+        tags: ['Auth'],
+        summary: 'Log out the current user',
+        responses: [
+            new OA\Response(response: 200, description: 'Logged out successfully')
+        ]
+    )]
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
