@@ -19,6 +19,7 @@ Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name
 Route::get('/services', [\App\Http\Controllers\BookingController::class, 'services'])->name('services');
 
 Route::get('/book/{service}', [\App\Http\Controllers\BookingController::class, 'show'])->name('booking.show');
+Route::get('/api/available-dates/{service}', [\App\Http\Controllers\BookingController::class, 'getAvailableDates']);
 Route::get('/api/slots/{service}', [\App\Http\Controllers\BookingController::class, 'getSlots']);
 Route::post('/api/book', [\App\Http\Controllers\BookingController::class, 'store']);
 

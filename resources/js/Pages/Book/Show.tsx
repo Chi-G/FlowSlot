@@ -32,12 +32,17 @@ export default function Show({ service }: Props) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [slots, setSlots] = useState<TimeSlot[]>([]);
+    const [availableDates, setAvailableDates] = useState<string[]>([]);
     const [isLoadingSlots, setIsLoadingSlots] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
 
     useEffect(() => {
         fetchSlots(selectedDate);
     }, [selectedDate]);
+
+    useEffect(() => {
+        fetchAvailableDates(currentMonth);
+    }, [currentMonth]);
 
     const fetchSlots = async (date: Date) => {
         setIsLoadingSlots(true);
@@ -48,6 +53,15 @@ export default function Show({ service }: Props) {
             console.error('Error fetching slots:', error);
         } finally {
             setIsLoadingSlots(false);
+        }
+    };
+
+    const fetchAvailableDates = async (month: Date) => {
+        try {
+            const response = await axios.get(`/api/available-dates/${service.id}?month=${format(month, 'yyyy-MM')}`);
+            setAvailableDates(response.data);
+        } catch (error) {
+            console.error('Error fetching available dates:', error);
         }
     };
 
@@ -93,18 +107,27 @@ export default function Show({ service }: Props) {
                 const cloneDay = day;
                 const isSelected = isSameDay(day, selectedDate);
                 const isCurrentMonth = isSameMonth(day, monthStart);
+                const dateStr = format(day, 'yyyy-MM-dd');
+                const isAvailable = availableDates.includes(dateStr);
                 
                 days.push(
                     <div
                         key={day.toString()}
-                        className={`relative h-14 cursor-pointer border-r border-b border-slate-50 p-1 flex items-center justify-center transition-all hover:bg-indigo-50/50 ${
+                        className={`relative h-14 cursor-pointer border-r border-b border-slate-50 p-1 flex flex-col items-center justify-center transition-all hover:bg-indigo-50/50 ${
                             !isCurrentMonth ? 'bg-slate-50/30 text-slate-300' : 'text-slate-700'
-                        } ${isSelected ? 'bg-indigo-100/50 ring-1 ring-inset ring-indigo-500' : ''}`}
+                        } ${isSelected ? 'bg-indigo-100/50 ring-1 ring-inset ring-indigo-500 z-10' : ''} ${
+                            isAvailable && isCurrentMonth && !isSelected ? 'bg-emerald-50/60' : ''
+                        }`}
                         onClick={() => setSelectedDate(cloneDay)}
                     >
                         <span className={`text-sm font-semibold select-none ${isSelected ? 'text-indigo-600' : ''}`}>
                             {format(day, 'd')}
                         </span>
+                        {isAvailable && isCurrentMonth && (
+                            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1">
+                                <div className="h-1 w-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                            </div>
+                        )}
                     </div>
                 );
                 day = addDays(day, 1);
@@ -123,7 +146,7 @@ export default function Show({ service }: Props) {
                     {/* Left: Service Info & Calendar */}
                     <div className="lg:col-span-8">
                         <div className="mb-8">
-                            <Link href="/" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 mb-4">
+                            <Link href="/services" className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 mb-4">
                                 <ChevronLeft size={16} /> Back to services
                             </Link>
                             <h1 className="text-3xl font-bold text-slate-900">{service.name}</h1>

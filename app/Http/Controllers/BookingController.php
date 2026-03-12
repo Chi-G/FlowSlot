@@ -80,6 +80,31 @@ class BookingController extends Controller
     }
 
     #[OA\Get(
+        path: '/api/available-dates/{service}',
+        operationId: 'getAvailableDates',
+        tags: ['Public'],
+        summary: 'Get dates with available slots for a given month',
+        parameters: [
+            new OA\Parameter(name: 'service', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'month', in: 'query', required: true, schema: new OA\Schema(type: 'string', description: 'YYYY-MM format'))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Successful operation')
+        ]
+    )]
+    public function getAvailableDates(Service $service, Request $request)
+    {
+        $month = $request->query('month'); // Expects YYYY-MM
+        
+        return TimeSlot::where('service_id', $service->id)
+            ->where('start_time', 'like', $month . '%')
+            ->where('status', 'available')
+            ->where('is_booked', false)
+            ->selectRaw('DISTINCT DATE(start_time) as date')
+            ->pluck('date');
+    }
+
+    #[OA\Get(
         path: '/book/confirm/{service}/{slot}',
         operationId: 'getConfirmationDetails',
         tags: ['Public'],
