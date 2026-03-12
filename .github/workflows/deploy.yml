@@ -1,0 +1,58 @@
+name: Deploy to WhoGoHost
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, mysql, gd
+        coverage: none
+
+    - name: Install Composer Dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install NPM Dependencies & Build
+      run: |
+        npm install
+        npm run build
+
+    - name: Sync Files via SCP
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
+        username: ${{ secrets.WHOGOHOST_SSH_USER }}
+        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "."
+        target: "/home/forahiao/public_html/flowslot.forahia.org.ng"
+        strip_components: 0
+        rm: false
+
+    - name: Post-Deployment Commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
+        username: ${{ secrets.WHOGOHOST_SSH_USER }}
+        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          php artisan migrate --force
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache

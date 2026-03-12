@@ -1,0 +1,140 @@
+import React, { ReactNode } from 'react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import ApplicationLogo from '../Components/ApplicationLogo';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+    LayoutDashboard, 
+    Calendar, 
+    Settings, 
+    Clock, 
+    Users, 
+    Bell, 
+    LogOut,
+    ChevronLeft,
+    ChevronRight,
+    Search
+} from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+
+interface Props {
+    children: ReactNode;
+    title?: string;
+}
+
+export default function AdminLayout({ children, title }: Props) {
+    const { auth } = usePage().props as any;
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
+
+    const menuItems = [
+        { label: 'Dashboard', icon: LayoutDashboard, href: route('admin.dashboard') },
+        // { label: 'Manage Calendar', icon: Calendar, href: '/admin/calendar' }, // TODO: Implement
+        { label: 'Services', icon: Clock, href: route('admin.services.index') },
+        // { label: 'Customers', icon: Users, href: '/admin/customers' }, // TODO: Implement
+        { label: 'Generate Slots', icon: Clock, href: route('admin.slots.index') },
+        { label: 'Appointments', icon: Calendar, href: route('admin.appointments.index') },
+    ];
+
+    return (
+        <div className="flex min-h-screen bg-slate-50 font-sans text-slate-900">
+            <Head title={title ? `${title} | Admin FlowSlot` : 'FlowSlot Admin'} />
+
+            {/* Sidebar */}
+            <aside 
+                className={cn(
+                    "sticky top-0 h-screen bg-white border-r border-slate-200 transition-all duration-300 z-50",
+                    isSidebarCollapsed ? "w-20" : "w-64"
+                )}
+            >
+                <div className="flex h-16 items-center px-6 border-b border-slate-200">
+                    <Link href="/admin/dashboard" className="flex items-center gap-3 overflow-hidden">
+                        <ApplicationLogo className="h-8 w-8 min-w-[32px] rounded-md shadow-sm object-cover" />
+                        {!isSidebarCollapsed && (
+                            <span className="text-lg font-bold tracking-tight whitespace-nowrap">
+                                Flow<span className="text-indigo-600">Slot</span>
+                            </span>
+                        )}
+                    </Link>
+                </div>
+
+                <div className="flex flex-col gap-1 p-4">
+                    {menuItems.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all group",
+                                // Active check would go here
+                                "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                            )}
+                        >
+                            <item.icon className={cn("h-5 w-5", "text-slate-400 group-hover:text-indigo-600")} />
+                            {!isSidebarCollapsed && <span>{item.label}</span>}
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="absolute bottom-0 w-full p-4 border-t border-slate-200 bg-white">
+                    <button 
+                        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                        className="flex w-full items-center justify-center gap-2 rounded-lg p-2 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors"
+                    >
+                        {isSidebarCollapsed ? <ChevronRight size={20} /> : <div className="flex items-center gap-2"><ChevronLeft size={20} /> <span className="text-sm">Collapse Sidebar</span></div>}
+                    </button>
+                    
+                    {!isSidebarCollapsed && (
+                        <div className="mt-4 flex items-center gap-3 px-2">
+                            <div className="h-8 w-8 rounded-full bg-slate-200" />
+                            <div className="flex-1 overflow-hidden">
+                                <p className="text-xs font-semibold truncate">{auth.user.name}</p>
+                                <p className="text-[10px] text-slate-500 truncate">{auth.user.email}</p>
+                            </div>
+                            <Link href="/logout" method="post" as="button" className="text-slate-400 hover:text-rose-500 transition-colors">
+                                <LogOut size={16} />
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </aside>
+
+            {/* Main Content Area */}
+            <div className="flex-1 flex flex-col min-w-0">
+                {/* Top Header */}
+                <header className="sticky top-0 z-40 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md px-8 flex items-center justify-between">
+                    <div className="flex items-center gap-4 bg-slate-100 rounded-full px-4 py-1.5 w-96 max-w-full border border-slate-200 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                        <Search size={18} className="text-slate-400" />
+                        <input 
+                            type="text" 
+                            placeholder="Search bookings, customers..." 
+                            className="bg-transparent border-none text-sm focus:ring-0 w-full p-0 h-6 text-slate-700" 
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <button className="relative p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+                            <Bell size={20} />
+                            <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-indigo-600 ring-2 ring-white"></span>
+                        </button>
+                        <div className="h-8 w-[1px] bg-slate-200 mx-2" />
+                        <h1 className="text-sm font-semibold text-slate-700">{title || 'Admin Dashboard'}</h1>
+                    </div>
+                </header>
+
+                <main className="flex-1 p-8 overflow-y-auto">
+                    <motion.div
+                        key={title}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {children}
+                    </motion.div>
+                </main>
+            </div>
+        </div>
+    );
+}
