@@ -31,6 +31,22 @@ jobs:
         npm install
         npm run build
 
+    - name: Pre-Deployment Cleanup
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
+        username: ${{ secrets.WHOGOHOST_SSH_USER }}
+        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          # Remove logs and cache to free up space
+          rm -rf storage/logs/*.log
+          rm -rf storage/framework/cache/data/*
+          rm -rf bootstrap/cache/*.php
+          # Remove accidental node_modules if they were synced previously
+          rm -rf node_modules
+
     - name: Sync Files via SCP
       uses: appleboy/scp-action@master
       with:
@@ -38,7 +54,7 @@ jobs:
         username: ${{ secrets.WHOGOHOST_SSH_USER }}
         port: ${{ secrets.WHOGOHOST_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "."
+        source: ".,!node_modules,!.git,!.github"
         target: "/home/forahiao/public_html/flowslot.forahia.org.ng"
         strip_components: 0
         rm: false
