@@ -81,22 +81,37 @@ class SystemDemoSeeder extends Seeder
             }
         }
 
-        // 4. Create demo appointment
-        $firstService = Service::first();
-        $firstSlot = TimeSlot::where('service_id', $firstService->id)->first();
-        
-        if ($firstSlot) {
-            $firstSlot->update(['is_booked' => true, 'status' => 'reserved']);
-            Appointment::create([
-                'user_id' => $admin->id,
-                'service_id' => $firstService->id,
-                'time_slot_id' => $firstSlot->id,
-                'customer_name' => 'John Doe',
-                'customer_email' => 'john@example.com',
-                'customer_phone' => '1234567890',
-                'status' => 'confirmed',
-                'reference_number' => 'FS-' . strtoupper(bin2hex(random_bytes(4))),
-            ]);
+        // 4. Create 20 demo appointments
+        $services = Service::all();
+        $names = ['Liam Smith', 'Olivia Johnson', 'Noah Williams', 'Emma Brown', 'James Jones', 'Sophia Garcia', 'Robert Miller', 'Isabella Davis', 'Michael Rodriguez', 'Charlotte Martinez', 'William Hernandez', 'Amelia Lopez', 'David Gonzales', 'Mia Wilson', 'Richard Anderson', 'Evelyn Thomas', 'Joseph Taylor', 'Harper Moore', 'Thomas Jackson', 'Abigail Martin'];
+
+        for ($i = 0; $i < 20; $i++) {
+            $service = $services->random();
+            $slot = TimeSlot::where('service_id', $service->id)
+                ->where('is_booked', false)
+                ->inRandomOrder()
+                ->first();
+
+            if ($slot) {
+                $status = collect(['confirmed', 'pending', 'cancelled'])->random();
+                
+                $slot->update([
+                    'is_booked' => $status !== 'cancelled', 
+                    'status' => $status === 'confirmed' ? 'reserved' : ($status === 'pending' ? 'reserved' : 'available')
+                ]);
+
+                Appointment::create([
+                    'user_id' => $admin->id,
+                    'service_id' => $service->id,
+                    'time_slot_id' => $slot->id,
+                    'customer_name' => $names[$i],
+                    'customer_email' => strtolower(str_replace(' ', '.', $names[$i])) . '@example.com',
+                    'customer_phone' => '+1' . rand(100, 999) . rand(100, 999) . rand(1000, 9999),
+                    'status' => $status,
+                    'reference_number' => 'FS-' . strtoupper(bin2hex(random_bytes(4))),
+                    'created_at' => Carbon::now()->subDays(rand(0, 5)), // Some from previous days
+                ]);
+            }
         }
     }
 }

@@ -25,10 +25,8 @@ class DashboardController extends Controller
                 'activeServices' => Service::where('is_active', true)->count(),
             ],
             'todayBookings' => Appointment::with(['service', 'timeSlot'])
-                ->whereHas('timeSlot', function($q) use ($today) {
-                    $q->whereDate('start_time', $today);
-                })
-                ->orderBy('id', 'desc')
+                ->latest()
+                ->limit(5)
                 ->get(),
         ]);
     }
