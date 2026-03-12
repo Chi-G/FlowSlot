@@ -152,13 +152,14 @@ export default function Index({ services, filters }: Props) {
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link href={route('admin.services.edit', service.id)}>
-                                                        <button className="p-2 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-all">
+                                                        <button className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all shadow-sm" title="Edit Service">
                                                             <Edit2 size={16} />
                                                         </button>
                                                     </Link>
                                                     <button 
                                                         onClick={() => handleDelete(service.id)}
-                                                        className="p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-all"
+                                                        className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition-all shadow-sm"
+                                                        title="Delete Service"
                                                     >
                                                         <Trash2 size={16} />
                                                     </button>

@@ -162,20 +162,20 @@ export default function Index({ appointments, filters }: Props) {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button 
                                                         onClick={() => handleUpdateStatus(appointment.id, 'confirmed')}
-                                                        className="p-2 text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all"
+                                                        className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all shadow-sm"
                                                         title="Confirm"
                                                     >
                                                         <CheckCircle2 size={16} />
                                                     </button>
                                                     <button 
                                                         onClick={() => handleUpdateStatus(appointment.id, 'cancelled')}
-                                                        className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                                        className="p-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition-all shadow-sm"
                                                         title="Cancel"
                                                     >
                                                         <XCircle size={16} />
                                                     </button>
                                                     <Link href={route('admin.appointments.show', appointment.id)}>
-                                                        <button className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg transition-all">
+                                                        <button className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all shadow-sm" title="View Details">
                                                             <Eye size={16} />
                                                         </button>
                                                     </Link>
