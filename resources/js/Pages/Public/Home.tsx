@@ -53,7 +53,7 @@ export default function Home() {
                         className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 border border-slate-100"
                     >
                         <Sparkles size={12} className="text-indigo-500" />
-                        <span>FlowSlot v1.0.0 — The Intelligent Booking Infrastructure</span>
+                        <span>SMART BOOKING SYSTEM — NO DOUBLE-BOOKINGS. NO MISSED APPOINTMENTS</span>
                     </motion.div>
 
                     <motion.h1
@@ -62,7 +62,7 @@ export default function Home() {
                         transition={{ delay: 0.1 }}
                         className="text-6xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-8"
                     >
-                        Enterprise Scheduling, <br />
+                        Your Bookings, Organized, <br />
                         <span className="text-indigo-600">Simplified.</span>
                     </motion.h1>
 
@@ -72,7 +72,7 @@ export default function Home() {
                         transition={{ delay: 0.2 }}
                         className="text-xl md:text-2xl font-medium text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed"
                     >
-                        Stop wrestling with calendars. Manage world-class appointment workflows with 
+                        Let clients book their own slots. You focus on the work that matters. 
                         <span className="text-slate-900"> absolute precision.</span>
                     </motion.p>
 
@@ -84,7 +84,7 @@ export default function Home() {
                     >
                         <Link href={route('services')}>
                             <Button className="h-16 px-12 text-lg rounded-full shadow-2xl shadow-indigo-500/10 group transform transition active:scale-95">
-                                Explore Booking Options
+                                Book a Demo Slot
                                 <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
                             </Button>
                         </Link>
@@ -95,18 +95,18 @@ export default function Home() {
                 
                 <ServiceCard 
                     icon={Bell}
-                    title="Automated Updates"
-                    description="Intelligent email and SMS delivery for every confirmation."
-                    badge="Queued"
+                    title="Instant Confirmations"
+                    description="Clients get email + SMS the moment they book. No manual work.."
+                    badge="Automatic"
                     delay={0.6}
                     position="bottom-[20%] left-[8%]"
                 />
 
                 <ServiceCard 
                     icon={Lock}
-                    title="Data Integrity"
-                    description="Rock-solid deduplication and replay protection for your data."
-                    badge="Verified"
+                    title="No Double-Bookings"
+                    description="One slot, one booking. Our system locks each slot automatically."
+                    badge="protected"
                     delay={0.7}
                     position="bottom-[15%] right-[12%]"
                 />
