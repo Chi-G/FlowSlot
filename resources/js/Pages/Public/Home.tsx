@@ -5,7 +5,7 @@ import { Calendar, Shield, Zap, Star, Users, ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import Button from '@/Components/Button';
 
-export default function About() {
+export default function Home() {
     const stats = [
         { label: 'Annual Bookings', value: '450k+', icon: Calendar },
         { label: 'Active Users', value: '120k+', icon: Users },
@@ -38,10 +38,10 @@ export default function About() {
     ];
 
     return (
-        <PublicLayout title="About Us">
+        <PublicLayout title="Welcome">
             <div className="py-20 px-4 sm:px-6 lg:px-8">
                 {/* Hero Section */}
-                <div className="text-center mb-20 max-w-3xl mx-auto">
+                <div className="text-center mb-20 max-w-4xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -54,18 +54,37 @@ export default function About() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl font-extrabold text-slate-900 tracking-tight sm:text-6xl mb-8"
+                        className="text-5xl font-extrabold text-slate-900 tracking-tight sm:text-7xl mb-8"
                     >
-                        Redefining how the world <span className="text-indigo-600">connects</span>.
+                        Enterprise scheduling <br />
+                        <span className="text-indigo-600 underline decoration-indigo-200 underline-offset-8">redefined</span>.
                     </motion.h1>
                     <motion.p 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-xl text-slate-500 leading-relaxed"
+                        className="text-xl text-slate-500 leading-relaxed mb-10"
                     >
-                        FlowSlot Enterprise was built with a single mission: to eliminate the friction of scheduling. We help global organizations manage time with precision, security, and elegance.
+                        FlowSlot helps global organizations manage time with precision, security, and elegance. Experience the friction-free way to connect with your clients.
                     </motion.p>
+                    <motion.div
+                         initial={{ opacity: 0, y: 20 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         transition={{ delay: 0.3 }}
+                         className="flex flex-col sm:flex-row gap-4 justify-center"
+                    >
+                        <Link href={route('services')}>
+                            <Button className="h-14 px-8 text-lg rounded-2xl shadow-xl shadow-indigo-100 group">
+                                Explore Services
+                                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                            </Button>
+                        </Link>
+                        <Link href="/login">
+                            <Button variant="outline" className="h-14 px-8 text-lg rounded-2xl border-slate-200">
+                                Admin Portal
+                            </Button>
+                        </Link>
+                    </motion.div>
                 </div>
 
                 {/* Stats Grid */}
@@ -75,11 +94,11 @@ export default function About() {
                             key={stat.label}
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.3 + idx * 0.1 }}
-                            className="text-center p-8 rounded-3xl bg-white border border-slate-100 shadow-sm"
+                            transition={{ delay: 0.4 + idx * 0.1 }}
+                            className="text-center p-8 rounded-[2rem] bg-white border border-slate-100 shadow-sm"
                         >
                             <stat.icon className="mx-auto mb-4 text-slate-400" size={24} />
-                            <p className="text-3xl font-black text-slate-900 mb-1">{stat.value}</p>
+                            <p className="text-4xl font-black text-slate-900 mb-1">{stat.value}</p>
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
                         </motion.div>
                     ))}
@@ -92,15 +111,15 @@ export default function About() {
                             key={feature.title}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.5 + idx * 0.1 }}
-                            className="flex flex-col gap-6"
+                            transition={{ delay: 0.6 + idx * 0.1 }}
+                            className="flex flex-col gap-6 group"
                         >
-                            <div className={`h-14 w-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center shadow-sm`}>
-                                <feature.icon size={28} />
+                            <div className={`h-16 w-16 rounded-[1.25rem] ${feature.bg} ${feature.color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                                <feature.icon size={32} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                                <p className="text-slate-500 leading-relaxed font-medium">
+                                <h3 className="text-2xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                                <p className="text-slate-500 text-lg leading-relaxed font-medium">
                                     {feature.description}
                                 </p>
                             </div>
@@ -111,22 +130,24 @@ export default function About() {
                 {/* CTA Section */}
                 <motion.div 
                     initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                    className="relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-12 text-center text-white"
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-16 text-center text-white"
                 >
                     <div className="relative z-10 max-w-2xl mx-auto">
-                        <h2 className="text-3xl font-extrabold mb-6">Ready to streamline your enterprise?</h2>
-                        <p className="text-slate-400 mb-10 text-lg font-medium">Join over 10,000 global companies who trust FlowSlot with their most valuable resource: time.</p>
+                        <h2 className="text-4xl font-extrabold mb-6 tracking-tight">Ready to streamline your enterprise?</h2>
+                        <p className="text-slate-400 mb-10 text-xl font-medium leading-relaxed">Join over 10,000 global companies who trust FlowSlot with their most valuable resource: time.</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href={route('booking.index')}>
-                                <Button className="w-full sm:w-auto px-10 h-14 text-lg">
-                                    Book a Demo
+                            <Link href={route('services')}>
+                                <Button className="w-full sm:w-auto px-12 h-16 text-xl rounded-2xl">
+                                    Book Now
                                 </Button>
                             </Link>
-                            <Button variant="outline" className="w-full sm:w-auto px-10 h-14 text-lg border-slate-700 text-white hover:bg-slate-800">
-                                Contact Sales
-                            </Button>
+                            <Link href="/login">
+                                <Button variant="outline" className="w-full sm:w-auto px-12 h-16 text-xl rounded-2xl border-slate-700 text-white hover:bg-slate-800">
+                                    Management
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                     {/* Background decoration */}

@@ -36,6 +36,15 @@ export default function PublicLayout({ children, title }: Props) {
                         {/* Desktop Nav */}
                         <div className="hidden md:flex items-center gap-8">
                             <Link 
+                                href="/" 
+                                className={cn(
+                                    "text-sm font-medium transition-colors",
+                                    usePage().url === '/' ? "text-indigo-600 font-bold" : "text-slate-600 hover:text-indigo-600"
+                                )}
+                            >
+                                Home
+                            </Link>
+                            <Link 
                                 href={route('services')} 
                                 className={cn(
                                     "text-sm font-medium transition-colors",
@@ -43,15 +52,6 @@ export default function PublicLayout({ children, title }: Props) {
                                 )}
                             >
                                 Services
-                            </Link>
-                            <Link 
-                                href={route('about')} 
-                                className={cn(
-                                    "text-sm font-medium transition-colors",
-                                    usePage().url === '/about' ? "text-indigo-600 font-bold" : "text-slate-600 hover:text-indigo-600"
-                                )}
-                            >
-                                About
                             </Link>
                             <Link href="/login" className="rounded-full bg-slate-900 px-6 py-2 text-sm font-semibold text-white hover:bg-slate-800 transition-all shadow-md active:scale-95">
                                 Admin Portal
@@ -75,8 +75,8 @@ export default function PublicLayout({ children, title }: Props) {
                     className="md:hidden overflow-hidden border-t border-slate-100 bg-white"
                 >
                     <div className="flex flex-col gap-4 p-4">
+                        <Link href="/" className="text-lg font-medium text-slate-600">Home</Link>
                         <Link href={route('services')} className="text-lg font-medium text-slate-600">Services</Link>
-                        <Link href={route('about')} className="text-lg font-medium text-slate-600">About</Link>
                         <Link href="/login" className="rounded-lg bg-indigo-600 p-3 text-center text-white font-semibold">Admin Portal</Link>
                     </div>
                 </motion.div>

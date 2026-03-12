@@ -17,9 +17,6 @@ Route::get('/dashboard', function () {
 
 Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.index');
 Route::get('/services', [\App\Http\Controllers\BookingController::class, 'services'])->name('services');
-Route::get('/about', function () {
-    return Inertia::render('Public/About');
-})->name('about');
 
 Route::get('/book/{service}', [\App\Http\Controllers\BookingController::class, 'show'])->name('booking.show');
 Route::get('/api/slots/{service}', [\App\Http\Controllers\BookingController::class, 'getSlots']);

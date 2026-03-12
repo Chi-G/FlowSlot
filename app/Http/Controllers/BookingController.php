@@ -12,9 +12,7 @@ class BookingController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Book/Index', [
-            'services' => Service::where('is_active', true)->paginate(6),
-        ]);
+        return Inertia::render('Public/Home');
     }
 
     public function services()
