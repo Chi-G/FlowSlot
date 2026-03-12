@@ -13,6 +13,7 @@ interface Props {
     confirmText?: string;
     cancelText?: string;
     variant?: 'danger' | 'primary' | 'warning';
+    isLoading?: boolean;
 }
 
 export default function ConfirmationModal({
@@ -23,7 +24,8 @@ export default function ConfirmationModal({
     onConfirm,
     confirmText = 'Confirm',
     cancelText = 'Cancel',
-    variant = 'danger'
+    variant = 'danger',
+    isLoading = false
 }: Props) {
     const icons = {
         danger: <Trash2 className="text-rose-600" size={24} />,
@@ -61,6 +63,7 @@ export default function ConfirmationModal({
                         variant="ghost"
                         className="flex-1 h-12 rounded-xl text-slate-500 font-bold hover:bg-slate-50"
                         onClick={onClose}
+                        disabled={isLoading}
                     >
                         {cancelText}
                     </Button>
@@ -68,6 +71,7 @@ export default function ConfirmationModal({
                         variant={buttonVariants[variant]}
                         className="flex-1 h-12 rounded-xl font-bold shadow-lg"
                         onClick={onConfirm}
+                        isLoading={isLoading}
                     >
                         {confirmText}
                     </Button>

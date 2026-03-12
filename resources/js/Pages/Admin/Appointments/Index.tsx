@@ -31,6 +31,7 @@ interface Props {
 export default function Index({ appointments }: Props) {
     const [showModal, setShowModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState<{ id: number; status: string } | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const handleUpdateStatus = (id: number, status: string) => {
         setSelectedAppointment({ id, status });
@@ -39,10 +40,12 @@ export default function Index({ appointments }: Props) {
 
     const confirmStatusUpdate = () => {
         if (selectedAppointment) {
+            setIsProcessing(true);
             router.patch(route('admin.appointments.updateStatus', selectedAppointment.id), { 
                 status: selectedAppointment.status 
             }, {
                 onFinish: () => {
+                    setIsProcessing(false);
                     setShowModal(false);
                     setSelectedAppointment(null);
                 }
@@ -58,6 +61,7 @@ export default function Index({ appointments }: Props) {
                 description={`Are you sure you want to set this appointment to ${selectedAppointment?.status}? This will notify the customer.`}
                 confirmText={selectedAppointment?.status === 'confirmed' ? 'Yes, Confirm' : 'Yes, Cancel'}
                 variant={selectedAppointment?.status === 'confirmed' ? 'primary' : 'danger'}
+                isLoading={isProcessing}
                 onClose={() => setShowModal(false)}
                 onConfirm={confirmStatusUpdate}
             />

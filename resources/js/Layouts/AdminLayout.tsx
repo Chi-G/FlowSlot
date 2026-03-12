@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
 import ApplicationLogo from '../Components/ApplicationLogo';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,6 +17,7 @@ import {
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import ConfirmationModal from '../Components/ConfirmationModal';
+import Toast from '../Components/Toast';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -28,9 +29,23 @@ interface Props {
 }
 
 export default function AdminLayout({ children, title }: Props) {
-    const { auth } = usePage().props as any;
+    const { auth, flash } = usePage().props as any;
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [toast, setToast] = useState<{ message: string | null; type: 'success' | 'error' }>({
+        message: null,
+        type: 'success',
+    });
+    const [headerSearch, setHeaderSearch] = useState('');
+
+    // Handle flash messages
+    useEffect(() => {
+        if (flash?.success) {
+            setToast({ message: flash.success, type: 'success' });
+        } else if (flash?.error) {
+            setToast({ message: flash.error, type: 'error' });
+        }
+    }, [flash]);
 
     const menuItems = [
         { label: 'Dashboard', icon: LayoutDashboard, href: route('admin.dashboard'), active: route().current('admin.dashboard') },
@@ -46,6 +61,13 @@ export default function AdminLayout({ children, title }: Props) {
     return (
         <div className="flex min-h-screen bg-slate-50 font-sans text-slate-900">
             <Head title={title ? `${title} | Admin FlowSlot` : 'FlowSlot Admin'} />
+
+            {/* Notifications */}
+            <Toast 
+                message={toast.message} 
+                type={toast.type} 
+                onClose={() => setToast({ ...toast, message: null })} 
+            />
 
             <ConfirmationModal
                 show={showLogoutModal}
@@ -126,13 +148,20 @@ export default function AdminLayout({ children, title }: Props) {
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Top Header */}
                 <header className="sticky top-0 z-40 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md px-8 flex items-center justify-between">
-                    <div className="flex items-center gap-4 bg-slate-100 rounded-full px-4 py-1.5 w-96 max-w-full border border-slate-200 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                    <div className="flex items-center gap-4 bg-slate-100 rounded-full px-4 py-1.5 w-96 max-w-full border border-slate-200 focus-within:ring-2 focus-within:ring-indigo-100 transition-all relative group">
                         <Search size={18} className="text-slate-400" />
                         <input 
                             type="text" 
-                            placeholder="Search bookings, customers..." 
+                            value={headerSearch}
+                            onChange={(e) => setHeaderSearch(e.target.value)}
+                            placeholder="Global search (coming soon)..." 
                             className="bg-transparent border-none text-sm focus:ring-0 w-full p-0 h-6 text-slate-700" 
                         />
+                        {headerSearch && (
+                            <div className="absolute top-full left-0 mt-2 p-3 bg-slate-900 text-white text-[11px] font-bold rounded-xl shadow-2xl opacity-0 group-focus-within:opacity-100 transition-all transform translate-y-2 group-focus-within:translate-y-0 pointer-events-none z-50">
+                                Global search is currently being architected for enterprise-grade performance.
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-4">
