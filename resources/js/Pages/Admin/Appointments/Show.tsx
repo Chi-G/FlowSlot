@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import StatusBadge from '@/Components/StatusBadge';
 import Button from '@/Components/Button';
+import ConfirmationModal from '@/Components/ConfirmationModal';
 
 interface Appointment {
     id: number;
@@ -43,12 +44,61 @@ interface Props {
 }
 
 export default function Show({ appointment }: Props) {
-    const updateStatus = (status: string) => {
-        router.patch(route('admin.appointments.updateStatus', appointment.id), { status });
+    const [showModal, setShowModal] = useState(false);
+    const [pendingStatus, setPendingStatus] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const handleUpdateStatus = (status: string) => {
+        setPendingStatus(status);
+        setShowModal(true);
     };
+
+    const confirmStatusUpdate = () => {
+        if (pendingStatus) {
+            setIsProcessing(true);
+            router.patch(route('admin.appointments.updateStatus', appointment.id), { 
+                status: pendingStatus 
+            }, {
+                onFinish: () => {
+                    setIsProcessing(false);
+                    setShowModal(false);
+                    setPendingStatus(null);
+                }
+            });
+        }
+    };
+
+    const getModalConfig = () => {
+        switch (pendingStatus) {
+            case 'confirmed':
+                return { title: 'Confirm Appointment?', variant: 'primary' as const };
+            case 'completed':
+                return { title: 'Mark as Completed?', variant: 'primary' as const };
+            case 'cancelled':
+                return { title: 'Cancel Appointment?', variant: 'danger' as const };
+            default:
+                return { title: 'Update Status?', variant: 'primary' as const };
+        }
+    };
+
+    const modalConfig = getModalConfig();
 
     return (
         <AdminLayout title={`Booking ${appointment.reference_number}`}>
+            <ConfirmationModal
+                show={showModal}
+                title={modalConfig.title}
+                description={`Are you sure you want to set this appointment to ${pendingStatus}? This will notify the customer if applicable.`}
+                confirmText="Yes, Update"
+                variant={modalConfig.variant}
+                isLoading={isProcessing}
+                onClose={() => {
+                    setShowModal(false);
+                    setPendingStatus(null);
+                }}
+                onConfirm={confirmStatusUpdate}
+            />
+
             <div className="max-w-7xl">
                 <Link href={route('admin.appointments.index')} className="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 mb-8">
                     <ChevronLeft size={16} /> Back to appointments
@@ -157,7 +207,7 @@ export default function Show({ appointment }: Props) {
                             <div className="space-y-3">
                                 {appointment.status !== 'confirmed' && (
                                     <Button 
-                                        onClick={() => updateStatus('confirmed')}
+                                        onClick={() => handleUpdateStatus('confirmed')}
                                         className="w-full justify-start gap-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border-none"
                                     >
                                         <CheckCircle size={18} /> Confirm Appointment
@@ -165,7 +215,7 @@ export default function Show({ appointment }: Props) {
                                 )}
                                 {appointment.status !== 'completed' && appointment.status !== 'cancelled' && (
                                     <Button 
-                                        onClick={() => updateStatus('completed')}
+                                        onClick={() => handleUpdateStatus('completed')}
                                         className="w-full justify-start gap-3 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-none"
                                     >
                                         <CheckCircle size={18} /> Mark as Completed
@@ -173,7 +223,7 @@ export default function Show({ appointment }: Props) {
                                 )}
                                 {appointment.status !== 'cancelled' && (
                                     <Button 
-                                        onClick={() => updateStatus('cancelled')}
+                                        onClick={() => handleUpdateStatus('cancelled')}
                                         className="w-full justify-start gap-3 bg-rose-50 text-rose-600 hover:bg-rose-100 border-none"
                                     >
                                         <XCircle size={18} /> Cancel Appointment
@@ -181,7 +231,7 @@ export default function Show({ appointment }: Props) {
                                 )}
                                 {appointment.status === 'cancelled' && (
                                     <Button 
-                                        onClick={() => updateStatus('pending')}
+                                        onClick={() => handleUpdateStatus('pending')}
                                         className="w-full justify-start gap-3 bg-slate-50 text-slate-600 hover:bg-slate-100 border-none"
                                     >
                                         <RotateCcw size={18} /> Re-open Appointment

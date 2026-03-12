@@ -10,12 +10,25 @@ use Inertia\Inertia;
 
 class AppointmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
+        $appointments = Appointment::with(['service', 'timeSlot', 'user'])
+            ->when($search, function ($query, $search) {
+                $query->where('reference_number', 'like', "%{$search}%")
+                      ->orWhere('customer_name', 'like', "%{$search}%")
+                      ->orWhere('customer_email', 'like', "%{$search}%");
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
         return Inertia::render('Admin/Appointments/Index', [
-            'appointments' => Appointment::with(['service', 'timeSlot', 'user'])
-                ->orderBy('id', 'desc')
-                ->paginate(15),
+            'appointments' => $appointments,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

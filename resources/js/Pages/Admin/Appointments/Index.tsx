@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { Eye, Clock, Calendar, User, MoreVertical, CheckCircle2, XCircle } from 'lucide-react';
+import { Eye, Clock, Calendar, User, MoreVertical, CheckCircle2, XCircle, Search, X } from 'lucide-react';
 import StatusBadge from '@/Components/StatusBadge';
 import Pagination from '@/Components/Pagination';
 import ConfirmationModal from '@/Components/ConfirmationModal';
+import TextInput from '@/Components/TextInput';
 
 interface Appointment {
     id: number;
@@ -26,12 +27,31 @@ interface Props {
         data: Appointment[];
         links: any[];
     };
+    filters: {
+        search: string;
+    };
 }
 
-export default function Index({ appointments }: Props) {
+export default function Index({ appointments, filters }: Props) {
+    const [search, setSearch] = useState(filters.search || '');
     const [showModal, setShowModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState<{ id: number; status: string } | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    // Debounced search
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (search !== (filters.search || '')) {
+                router.get(
+                    route('admin.appointments.index'),
+                    { search: search },
+                    { preserveState: true, replace: true }
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [search]);
 
     const handleUpdateStatus = (id: number, status: string) => {
         setSelectedAppointment({ id, status });
@@ -67,9 +87,33 @@ export default function Index({ appointments }: Props) {
             />
 
             <div className="space-y-6">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-900">Appointment Management</h2>
-                    <p className="text-sm text-slate-500 font-medium">Track and manage all customer bookings.</p>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-2xl font-bold text-slate-900">Appointment Management</h2>
+                        <p className="text-sm text-slate-500 font-medium">Track and manage all customer bookings.</p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <div className="relative w-full md:w-64 group">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
+                                <Search size={16} />
+                            </div>
+                            <TextInput
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Search reference, name..."
+                                className="pl-10 h-10 w-full bg-white border-slate-200"
+                            />
+                            {search && (
+                                <button 
+                                    onClick={() => setSearch('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                >
+                                    <X size={14} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
