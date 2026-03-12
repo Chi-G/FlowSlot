@@ -94,24 +94,6 @@ export default function Home() {
                 {/* User-Centric Service Cards */}
                 
                 <ServiceCard 
-                    icon={Calendar}
-                    title="Smart Booking Engine"
-                    description="Automated appointment creation with built-in conflict prevention."
-                    badge="Secure"
-                    delay={0.4}
-                    position="top-[15%] left-[10%]"
-                />
-
-                <ServiceCard 
-                    icon={Activity}
-                    title="Live Availability"
-                    description="Real-time slot tracking and high-performance system caching."
-                    badge="Dynamic"
-                    delay={0.5}
-                    position="top-[20%] right-[10%]"
-                />
-
-                <ServiceCard 
                     icon={Bell}
                     title="Automated Updates"
                     description="Intelligent email and SMS delivery for every confirmation."
@@ -127,15 +109,6 @@ export default function Home() {
                     badge="Verified"
                     delay={0.7}
                     position="bottom-[15%] right-[12%]"
-                />
-
-                <ServiceCard 
-                    icon={LinkIcon}
-                    title="Global Ecosystem"
-                    description="Seamlessly connect with Google Calendar and external tools."
-                    badge="Connected"
-                    delay={0.8}
-                    position="top-[50%] -translate-y-1/2 right-[5%]"
                 />
 
                 {/* Aesthetic Accents */}

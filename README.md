@@ -32,6 +32,15 @@ FlowSlot leverages the powerful combination of Laravel and React via Inertia.js 
 - **Admin Portal**: Restricted area for service and appointment management.
 - **Queue System**: Asynchronous processing of intensive tasks (like generating slots).
 
+### GitHub Secrets
+| Name | Value |
+|---|---|
+| `SSH_PRIVATE_KEY` | *(Paste your SSH private key here)* |
+| `PUSHER_APP_ID` | `2127075` |
+| `PUSHER_APP_KEY` | `bb3e0971a0c70e5cd822` |
+| `PUSHER_APP_SECRET` | `d2459ada396fc67d46b1` |
+| `PUSHER_APP_CLUSTER` | `eu` |
+
 ### Data Flow
 ```mermaid
 graph TD
