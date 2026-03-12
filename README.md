@@ -35,11 +35,11 @@ FlowSlot leverages the powerful combination of Laravel and React via Inertia.js 
 ### GitHub Secrets
 | Name | Value |
 |---|---|
-| `SSH_PRIVATE_KEY` | *(Paste your SSH private key here)* |
-| `PUSHER_APP_ID` | `2127075` |
-| `PUSHER_APP_KEY` | `bb3e0971a0c70e5cd822` |
-| `PUSHER_APP_SECRET` | `d2459ada396fc67d46b1` |
-| `PUSHER_APP_CLUSTER` | `eu` |
+| `SSH_PRIVATE_KEY` | *(Your Private SSH Key)* |
+| `PUSHER_APP_ID` | *(Your Pusher App ID)* |
+| `PUSHER_APP_KEY` | *(Your Pusher Key)* |
+| `PUSHER_APP_SECRET` | *(Your Pusher Secret)* |
+| `PUSHER_APP_CLUSTER` | *(Your Pusher Cluster)* |
 
 ### Data Flow
 ```mermaid
