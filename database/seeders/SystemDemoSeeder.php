@@ -39,15 +39,18 @@ class SystemDemoSeeder extends Seeder
 
         for ($i = 1; $i <= 30; $i++) {
             $type = $serviceTypes[($i - 1) % count($serviceTypes)];
+            $name = $i > 6 ? "{$type[0]} Level {$i}" : $type[0];
             
-            $service = Service::create([
-                'name' => $i > 6 ? "{$type[0]} Level {$i}" : $type[0],
-                'description' => $type[1],
-                'duration_minutes' => $type[2],
-                'price' => $type[3] + ($i * 5),
-                'color_code' => $type[4],
-                'is_active' => true,
-            ]);
+            $service = Service::updateOrCreate(
+                ['name' => $name],
+                [
+                    'description' => $type[1],
+                    'duration_minutes' => $type[2],
+                    'price' => $type[3] + ($i * 5),
+                    'color_code' => $type[4],
+                    'is_active' => true,
+                ]
+            );
 
             // 3. Generate Time Slots for the next 7 days for each service
             // Limiting to fewer slots per service to avoid database bloat with 30 services
@@ -60,13 +63,17 @@ class SystemDemoSeeder extends Seeder
                 for ($s = 0; $s < 4; $s++) {
                     $slotEnd = $startTime->copy()->addMinutes($service->duration_minutes);
                     
-                    TimeSlot::create([
-                        'service_id' => $service->id,
-                        'start_time' => $startTime->toDateTimeString(),
-                        'end_time' => $slotEnd->toDateTimeString(),
-                        'is_booked' => false,
-                        'status' => 'available',
-                    ]);
+                    TimeSlot::updateOrCreate(
+                        [
+                            'service_id' => $service->id,
+                            'start_time' => $startTime->toDateTimeString(),
+                        ],
+                        [
+                            'end_time' => $slotEnd->toDateTimeString(),
+                            'is_booked' => false,
+                            'status' => 'available',
+                        ]
+                    );
 
                     $startTime->addMinutes($service->duration_minutes + 60);
                 }
