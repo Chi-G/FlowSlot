@@ -1,0 +1,43 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "FlowSlot API Documentation",
+        "description": "Comprehensive API documentation for the FlowSlot Enterprise Appointment Booking System.",
+        "contact": {
+            "email": "admin@flowslot.forahia.org.ng"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://flowslot.forahia.org.ng",
+            "description": "Live Production Server"
+        },
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/services": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get available services",
+                "operationId": "getServices",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Public",
+            "description": "Public"
+        }
+    ]
+}

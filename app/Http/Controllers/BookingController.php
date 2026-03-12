@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 use App\Models\Service;
 use App\Models\TimeSlot;
@@ -15,6 +16,18 @@ class BookingController extends Controller
         return Inertia::render('Public/Home');
     }
 
+    #[OA\Get(
+        path: '/api/services',
+        operationId: 'getServices',
+        tags: ['Public'],
+        summary: 'Get available services',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Successful operation'
+            )
+        ]
+    )]
     public function services()
     {
         return Inertia::render('Public/Services', [

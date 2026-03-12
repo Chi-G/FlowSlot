@@ -95,4 +95,6 @@ sequenceDiagram
    ```
 
 ## Documentation
-For full API documentation and architectural patterns, please refer to the `.docs` folder (coming soon).
+
+- **[API Documentation (Swagger)](https://flowslot.forahia.org.ng/api/documentation)**: Interactive API playground and system schema.
+- For architectural patterns and internal documentation, please refer to the `.docs` folder (coming soon).
