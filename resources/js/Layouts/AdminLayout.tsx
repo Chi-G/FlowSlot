@@ -33,12 +33,10 @@ export default function AdminLayout({ children, title }: Props) {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     const menuItems = [
-        { label: 'Dashboard', icon: LayoutDashboard, href: route('admin.dashboard') },
-        // { label: 'Manage Calendar', icon: Calendar, href: '/admin/calendar' }, // TODO: Implement
-        { label: 'Services', icon: Clock, href: route('admin.services.index') },
-        // { label: 'Customers', icon: Users, href: '/admin/customers' }, // TODO: Implement
-        { label: 'Generate Slots', icon: Clock, href: route('admin.slots.index') },
-        { label: 'Appointments', icon: Calendar, href: route('admin.appointments.index') },
+        { label: 'Dashboard', icon: LayoutDashboard, href: route('admin.dashboard'), active: route().current('admin.dashboard') },
+        { label: 'Services', icon: Clock, href: route('admin.services.index'), active: route().current('admin.services.*') },
+        { label: 'Generate Slots', icon: Clock, href: route('admin.slots.index'), active: route().current('admin.slots.*') },
+        { label: 'Appointments', icon: Calendar, href: route('admin.appointments.index'), active: route().current('admin.appointments.*') },
     ];
 
     const handleLogout = () => {
@@ -84,11 +82,15 @@ export default function AdminLayout({ children, title }: Props) {
                             href={item.href}
                             className={cn(
                                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all group",
-                                // Active check would go here
-                                "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                                item.active 
+                                    ? "bg-indigo-50 text-indigo-600 shadow-sm shadow-indigo-100/50" 
+                                    : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
                             )}
                         >
-                            <item.icon className={cn("h-5 w-5", "text-slate-400 group-hover:text-indigo-600")} />
+                            <item.icon className={cn(
+                                "h-5 w-5 transition-colors", 
+                                item.active ? "text-indigo-600" : "text-slate-400 group-hover:text-indigo-600"
+                            )} />
                             {!isSidebarCollapsed && <span>{item.label}</span>}
                         </Link>
                     ))}

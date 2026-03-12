@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Eye, Clock, Calendar, User, MoreVertical, CheckCircle2, XCircle } from 'lucide-react';
 import StatusBadge from '@/Components/StatusBadge';
 import Pagination from '@/Components/Pagination';
+import ConfirmationModal from '@/Components/ConfirmationModal';
 
 interface Appointment {
     id: number;
@@ -28,14 +29,39 @@ interface Props {
 }
 
 export default function Index({ appointments }: Props) {
-    const updateStatus = (id: number, status: string) => {
-        if (confirm(`Set appointment to ${status}?`)) {
-            router.patch(route('admin.appointments.updateStatus', id), { status });
+    const [showModal, setShowModal] = useState(false);
+    const [selectedAppointment, setSelectedAppointment] = useState<{ id: number; status: string } | null>(null);
+
+    const handleUpdateStatus = (id: number, status: string) => {
+        setSelectedAppointment({ id, status });
+        setShowModal(true);
+    };
+
+    const confirmStatusUpdate = () => {
+        if (selectedAppointment) {
+            router.patch(route('admin.appointments.updateStatus', selectedAppointment.id), { 
+                status: selectedAppointment.status 
+            }, {
+                onFinish: () => {
+                    setShowModal(false);
+                    setSelectedAppointment(null);
+                }
+            });
         }
     };
 
     return (
         <AdminLayout title="Appointments">
+            <ConfirmationModal
+                show={showModal}
+                title={selectedAppointment?.status === 'confirmed' ? 'Confirm Appointment?' : 'Cancel Appointment?'}
+                description={`Are you sure you want to set this appointment to ${selectedAppointment?.status}? This will notify the customer.`}
+                confirmText={selectedAppointment?.status === 'confirmed' ? 'Yes, Confirm' : 'Yes, Cancel'}
+                variant={selectedAppointment?.status === 'confirmed' ? 'primary' : 'danger'}
+                onClose={() => setShowModal(false)}
+                onConfirm={confirmStatusUpdate}
+            />
+
             <div className="space-y-6">
                 <div>
                     <h2 className="text-2xl font-bold text-slate-900">Appointment Management</h2>
@@ -87,14 +113,14 @@ export default function Index({ appointments }: Props) {
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button 
-                                                        onClick={() => updateStatus(appointment.id, 'confirmed')}
+                                                        onClick={() => handleUpdateStatus(appointment.id, 'confirmed')}
                                                         className="p-2 text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all"
                                                         title="Confirm"
                                                     >
                                                         <CheckCircle2 size={16} />
                                                     </button>
                                                     <button 
-                                                        onClick={() => updateStatus(appointment.id, 'cancelled')}
+                                                        onClick={() => handleUpdateStatus(appointment.id, 'cancelled')}
                                                         className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
                                                         title="Cancel"
                                                     >
