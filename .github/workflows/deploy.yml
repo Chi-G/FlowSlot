@@ -27,6 +27,9 @@ jobs:
         node-version: '20'
 
     - name: Install NPM Dependencies & Build
+      env:
+        VITE_PUSHER_APP_KEY: ${{ secrets.PUSHER_APP_KEY }}
+        VITE_PUSHER_APP_CLUSTER: ${{ secrets.PUSHER_APP_CLUSTER }}
       run: |
         npm install
         npm run build
