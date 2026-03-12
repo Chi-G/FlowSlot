@@ -29,12 +29,12 @@ class SystemDemoSeeder extends Seeder
 
         // 2. Create 30 Services
         $serviceTypes = [
-            ['Executive Consultation', 'Premium 1-on-1 strategy session for enterprise leaders.', 60, 250, '#4f46e5'],
-            ['Technical Audit', 'Deep dive into your system architecture and performance.', 90, 450, '#0891b2'],
-            ['Wellness Coaching', 'Holistic approach to professional burnout and peak performance.', 45, 125, '#059669'],
-            ['Quick Check-in', 'Short sync for existing clients to resolve minor blockers.', 15, 50, '#d97706'],
-            ['Strategy Workshop', 'Interactive session to align your team goals.', 120, 800, '#e11d48'],
-            ['Code Review', 'Expert analysis of your codebase for optimization.', 60, 300, '#7c3aed'],
+            ['Executive Consultation', 'Premium 1-on-1 strategy session for enterprise leaders.', 60, 250, '#4f46e5', 'Strategy'],
+            ['Technical Audit', 'Deep dive into your system architecture and performance.', 90, 450, '#0891b2', 'Technical'],
+            ['Wellness Coaching', 'Holistic approach to professional burnout and peak performance.', 45, 125, '#059669', 'Wellness'],
+            ['Quick Check-in', 'Short sync for existing clients to resolve minor blockers.', 15, 50, '#d97706', 'Support'],
+            ['Strategy Workshop', 'Interactive session to align your team goals.', 120, 800, '#e11d48', 'Strategy'],
+            ['Code Review', 'Expert analysis of your codebase for optimization.', 60, 300, '#7c3aed', 'Technical'],
         ];
 
         for ($i = 1; $i <= 30; $i++) {
@@ -44,6 +44,7 @@ class SystemDemoSeeder extends Seeder
             $service = Service::updateOrCreate(
                 ['name' => $name],
                 [
+                    'category' => $type[5],
                     'description' => $type[1],
                     'duration_minutes' => $type[2],
                     'price' => $type[3] + ($i * 5),

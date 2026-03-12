@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('duration_minutes');
             $table->decimal('price', 10, 2);
-            $table->string('color_code')->default('#6366f1'); // Default Indigo
+            $table->string('color_code')->default('#6366f1');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

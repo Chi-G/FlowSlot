@@ -20,7 +20,10 @@ class BookingController extends Controller
         path: '/api/services',
         operationId: 'getServices',
         tags: ['Public'],
-        summary: 'Get available services',
+        summary: 'Get available services with categorization',
+        parameters: [
+            new OA\Parameter(name: 'category', in: 'query', required: false, schema: new OA\Schema(type: 'string'))
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -28,10 +31,23 @@ class BookingController extends Controller
             )
         ]
     )]
-    public function services()
+    public function services(Request $request)
     {
+        $query = Service::where('is_active', true);
+        
+        if ($request->has('category') && $request->category !== 'All') {
+            $query->where('category', $request->category);
+        }
+
+        $categories = Service::where('is_active', true)
+            ->distinct()
+            ->pluck('category')
+            ->prepend('All');
+
         return Inertia::render('Public/Services', [
-            'services' => Service::where('is_active', true)->paginate(6),
+            'services' => $query->paginate(12)->withQueryString(),
+            'categories' => $categories,
+            'selectedCategory' => $request->query('category', 'All'),
         ]);
     }
 
