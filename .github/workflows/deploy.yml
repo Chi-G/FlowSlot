@@ -85,10 +85,12 @@ jobs:
           grep -q "PUSHER_APP_SECRET" .env || echo "PUSHER_APP_SECRET=${{ secrets.PUSHER_APP_SECRET }}" >> .env
           grep -q "PUSHER_APP_CLUSTER" .env || echo "PUSHER_APP_CLUSTER=${{ secrets.PUSHER_APP_CLUSTER }}" >> .env
           
-          # Update values using sed. 
-          # We force Broadcaster and Cluster, but allow APP_ID/KEY/SECRET to be injected if updated.
+          # Update values using sed only if secrets are not empty
           sed -i "s/^BROADCAST_CONNECTION=.*/BROADCAST_CONNECTION=pusher/" .env
-          sed -i "s/^PUSHER_APP_CLUSTER=.*/PUSHER_APP_CLUSTER=\"${{ secrets.PUSHER_APP_CLUSTER }}\"/" .env
+          
+          if [ ! -z "${{ secrets.PUSHER_APP_CLUSTER }}" ]; then
+            sed -i "s/^PUSHER_APP_CLUSTER=.*/PUSHER_APP_CLUSTER=\"${{ secrets.PUSHER_APP_CLUSTER }}\"/" .env
+          fi
           
           # Force Database Name if provided in Secrets, otherwise fallback to existing
           if [ ! -z "${{ secrets.DB_DATABASE }}" ]; then
