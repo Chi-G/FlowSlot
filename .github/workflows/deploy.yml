@@ -59,7 +59,7 @@ jobs:
         username: ${{ secrets.WHOGOHOST_SSH_USER }}
         port: ${{ secrets.WHOGOHOST_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: ".,!node_modules,!vendor,!.git,!.github"
+        source: ".,!node_modules,!vendor,!.git,!.github,!.env"
         target: "/home/forahiao/public_html/flowslot.forahia.org.ng"
         strip_components: 0
         rm: false
@@ -77,35 +77,43 @@ jobs:
         script: |
           cd /home/forahiao/public_html/flowslot.forahia.org.ng
           
-          # Install Composer Dependencies on server
+          # 1. Diagnostics (Safe: only checks existence/keys, not values)
+          echo "Checking environment status..."
+          if [ ! -f .env ]; then
+            echo "::warning ::.env file NOT FOUND on server!"
+            # Optionally create a skeleton if it's missing, but safer for user to do it
+          else
+            echo "Found .env file."
+            grep -q "DB_DATABASE" .env && echo "DB_DATABASE key found." || echo "::warning ::DB_DATABASE key MISSING in .env"
+            grep -q "DB_DATABASE=" .env && [ -z "$(grep "^DB_DATABASE=" .env | cut -d'=' -f2)" ] && echo "::warning ::DB_DATABASE is EMPTY in .env"
+          fi
+          
+          # 2. Install Composer Dependencies on server
           composer install --no-dev --optimize-autoloader --no-interaction --no-progress
           
-          # Inject Pusher secrets into .env if they don't exist
-          grep -q "PUSHER_APP_ID" .env || echo "PUSHER_APP_ID=$PUSHER_APP_ID" >> .env
-          grep -q "PUSHER_APP_KEY" .env || echo "PUSHER_APP_KEY=$PUSHER_APP_KEY" >> .env
-          grep -q "PUSHER_APP_SECRET" .env || echo "PUSHER_APP_SECRET=$PUSHER_APP_SECRET" >> .env
-          grep -q "PUSHER_APP_CLUSTER" .env || echo "PUSHER_APP_CLUSTER=$PUSHER_APP_CLUSTER" >> .env
+          # 3. Inject Pusher secrets into .env if they don't exist
+          [ -f .env ] && grep -q "PUSHER_APP_ID" .env || echo "PUSHER_APP_ID=$PUSHER_APP_ID" >> .env
+          [ -f .env ] && grep -q "PUSHER_APP_KEY" .env || echo "PUSHER_APP_KEY=$PUSHER_APP_KEY" >> .env
+          [ -f .env ] && grep -q "PUSHER_APP_SECRET" .env || echo "PUSHER_APP_SECRET=$PUSHER_APP_SECRET" >> .env
+          [ -f .env ] && grep -q "PUSHER_APP_CLUSTER" .env || echo "PUSHER_APP_CLUSTER=$PUSHER_APP_CLUSTER" >> .env
           
-          # Update values using sed only if secrets are not empty
+          # 4. Update values using sed only if secrets/variables are NOT empty
           sed -i "s/^BROADCAST_CONNECTION=.*/BROADCAST_CONNECTION=pusher/" .env
           
           if [ ! -z "$PUSHER_APP_CLUSTER" ]; then
             sed -i "s/^PUSHER_APP_CLUSTER=.*/PUSHER_APP_CLUSTER=\"$PUSHER_APP_CLUSTER\"/" .env
           fi
           
-          # Force Database Name if provided in Secrets, otherwise fallback to existing
+          # Only update DB_DATABASE if explicitly provided in secrets
           if [ ! -z "$DB_DATABASE" ]; then
+            echo "Updating DB_DATABASE from secrets..."
             sed -i "s/^DB_DATABASE=.*/DB_DATABASE=$DB_DATABASE/" .env
           fi
           
-          # Clear existing cache to ensure new env values are picked up
+          # 5. Laravel Optimization
           php artisan config:clear
           php artisan cache:clear
-
-          # Run Migrations (This only updates the table structure/columns)
           php artisan migrate --force
-          
-          # Re-cache for performance
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
