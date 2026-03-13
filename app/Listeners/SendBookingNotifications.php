@@ -6,14 +6,10 @@ use App\Events\BookingCreated;
 use App\Models\User;
 use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\NewBookingAlertNotification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
 
-class SendBookingNotifications implements ShouldQueue
+class SendBookingNotifications
 {
-    use InteractsWithQueue;
-
     /**
      * Handle the event.
      */
