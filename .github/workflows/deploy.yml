@@ -35,12 +35,13 @@ jobs:
         npm run build
 
     - name: Pre-Deployment Cleanup
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.WHOGOHOST_SSH_HOST }}
         username: ${{ secrets.WHOGOHOST_SSH_USER }}
         port: ${{ secrets.WHOGOHOST_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        command_timeout: 10m
         script: |
           cd /home/forahiao/public_html/flowslot.forahia.org.ng
           # Remove logs and cache to free up space
@@ -51,27 +52,32 @@ jobs:
           rm -rf node_modules
 
     - name: Sync Files via SCP
-      uses: appleboy/scp-action@master
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.WHOGOHOST_SSH_HOST }}
         username: ${{ secrets.WHOGOHOST_SSH_USER }}
         port: ${{ secrets.WHOGOHOST_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: ".,!node_modules,!.git,!.github"
+        source: ".,!node_modules,!vendor,!.git,!.github"
         target: "/home/forahiao/public_html/flowslot.forahia.org.ng"
         strip_components: 0
         rm: false
+        timeout: 10m
 
     - name: Post-Deployment Commands
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.WHOGOHOST_SSH_HOST }}
         username: ${{ secrets.WHOGOHOST_SSH_USER }}
         port: ${{ secrets.WHOGOHOST_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        command_timeout: 15m
         envs: PUSHER_APP_ID,PUSHER_APP_KEY,PUSHER_APP_SECRET,PUSHER_APP_CLUSTER
         script: |
           cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          
+          # Install Composer Dependencies on server
+          composer install --no-dev --optimize-autoloader --no-interaction --no-progress
           
           # Inject Pusher secrets into .env if they don't exist
           grep -q "PUSHER_APP_ID" .env || echo "PUSHER_APP_ID=${{ secrets.PUSHER_APP_ID }}" >> .env
