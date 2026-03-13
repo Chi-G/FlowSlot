@@ -1,10 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, CheckCircle2, Menu, X } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import Toast from '@/Components/Toast';
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -16,11 +17,32 @@ interface Props {
 }
 
 export default function PublicLayout({ children, title }: Props) {
+    const { flash } = usePage().props as any;
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [toast, setToast] = useState<{ message: string | null; type: 'success' | 'error' }>({
+        message: null,
+        type: 'success',
+    });
+
+    // Handle flash messages
+    useEffect(() => {
+        if (flash?.success) {
+            setToast({ message: flash.success, type: 'success' });
+        } else if (flash?.error) {
+            setToast({ message: flash.error, type: 'error' });
+        }
+    }, [flash]);
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
             <Head title={title ? `${title} | FlowSlot` : 'FlowSlot - Smart Booking'} />
+
+            {/* Notifications */}
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast({ ...toast, message: null })}
+            />
 
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/20 bg-white/40 backdrop-blur-2xl">

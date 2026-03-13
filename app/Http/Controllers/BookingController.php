@@ -135,7 +135,7 @@ class BookingController extends Controller
     )]
     public function confirm(Service $service, TimeSlot $slot)
     {
-        if ($slot->is_booked || $slot->service_id !== $service->id) {
+        if ($slot->is_booked || $slot->service_id != $service->id) {
             return redirect()->route('booking.show', $service)->with('error', 'This slot is no longer available.');
         }
 

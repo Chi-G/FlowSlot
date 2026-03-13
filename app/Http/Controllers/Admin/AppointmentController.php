@@ -45,7 +45,22 @@ class AppointmentController extends Controller
             'status' => 'required|in:pending,confirmed,cancelled,completed',
         ]);
 
-        $appointment->update($validated);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($appointment, $validated) {
+            $appointment->update($validated);
+
+            if ($validated['status'] === 'cancelled') {
+                $appointment->timeSlot->update([
+                    'status' => 'available',
+                    'is_booked' => false,
+                ]);
+            } else {
+                // If moving away from cancelled, ensure slot is reserved
+                $appointment->timeSlot->update([
+                    'status' => 'reserved',
+                    'is_booked' => true,
+                ]);
+            }
+        });
 
         return back()->with('success', "Appointment status updated to {$validated['status']}.");
     }

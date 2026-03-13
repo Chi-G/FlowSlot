@@ -29,6 +29,17 @@ class BookingService
                 throw new Exception('This time slot is no longer available.');
             }
 
+            // Defensive check: Ensure no active appointment exists for this slot
+            $exists = Appointment::where('time_slot_id', $slot->id)
+                ->where('status', '!=', 'cancelled')
+                ->exists();
+
+            if ($exists) {
+                // Synchronize slot status if it was out of sync
+                $slot->update(['is_booked' => true, 'status' => 'reserved']);
+                throw new Exception('This time slot is already reserved.');
+            }
+
             // Mark slot as booked
             $slot->update([
                 'is_booked' => true,
