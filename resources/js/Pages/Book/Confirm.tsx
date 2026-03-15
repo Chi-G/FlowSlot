@@ -127,15 +127,19 @@ export default function Confirm({ service, slot }: Props) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number (Optional)</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
                                 <div className="relative">
                                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                     <input 
                                         type="tel"
+                                        required
+                                        maxLength={11}
+                                        pattern="[0-9]{11}"
+                                        title="Please enter exactly 11 digits"
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
-                                        placeholder="+1 (555) 000-0000"
+                                        placeholder="07065910449"
                                         value={data.customer_phone}
-                                        onChange={e => setData('customer_phone', e.target.value)}
+                                        onChange={e => setData('customer_phone', e.target.value.replace(/[^0-9]/g, ''))}
                                     />
                                 </div>
                                 {errors.customer_phone && <p className="mt-1 text-xs font-bold text-rose-500">{errors.customer_phone}</p>}

@@ -89,6 +89,7 @@ class BookingController extends Controller
         
         return TimeSlot::where('service_id', $service->id)
             ->whereDate('start_time', $date)
+            ->where('start_time', '>', now())
             ->where('status', 'available')
             ->where('is_booked', false)
             ->orderBy('start_time')
@@ -114,6 +115,7 @@ class BookingController extends Controller
         
         return TimeSlot::where('service_id', $service->id)
             ->where('start_time', 'like', $month . '%')
+            ->where('start_time', '>', now())
             ->where('status', 'available')
             ->where('is_booked', false)
             ->selectRaw('DISTINCT DATE(start_time) as date')
@@ -135,8 +137,8 @@ class BookingController extends Controller
     )]
     public function confirm(Service $service, TimeSlot $slot)
     {
-        if ($slot->is_booked || $slot->service_id != $service->id) {
-            return redirect()->route('booking.show', $service)->with('error', 'This slot is no longer available.');
+        if ($slot->is_booked || $slot->service_id != $service->id || $slot->start_time < now()) {
+            return redirect()->route('booking.show', $service)->with('error', 'This slot is no longer available or is in the past.');
         }
 
         return Inertia::render('Book/Confirm', [
@@ -175,7 +177,7 @@ class BookingController extends Controller
             'time_slot_id' => 'required|exists:time_slots,id',
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'nullable|string|max:20',
+            'customer_phone' => 'required|string|size:11|regex:/^[0-9]+$/',
         ]);
 
         try {

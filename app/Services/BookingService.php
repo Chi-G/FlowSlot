@@ -24,12 +24,6 @@ class BookingService
             $slot = TimeSlot::where('id', $data['time_slot_id'])
                 ->lockForUpdate()
                 ->firstOrFail();
-
-            if ($slot->is_booked || $slot->status !== 'available') {
-                throw new Exception('This time slot is no longer available.');
-            }
-
-            // Defensive check: Ensure no active appointment exists for this slot
             $exists = Appointment::where('time_slot_id', $slot->id)
                 ->where('status', '!=', 'cancelled')
                 ->exists();

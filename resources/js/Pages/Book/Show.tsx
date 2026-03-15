@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, addDays, eachDayOfInterval } from 'date-fns';
-import { ChevronLeft, ChevronRight, Clock, Info, Tag } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Info, Tag, AlertCircle } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import Button from '@/Components/Button';
 import StatusBadge from '@/Components/StatusBadge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -104,21 +105,40 @@ export default function Show({ service }: Props) {
 
         while (day <= endDate) {
             for (let i = 0; i < 7; i++) {
-                const cloneDay = day;
+                const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
                 const isSelected = isSameDay(day, selectedDate);
                 const isCurrentMonth = isSameMonth(day, monthStart);
-                const dateStr = format(day, 'yyyy-MM-dd');
-                const isAvailable = availableDates.includes(dateStr);
+                const isAvailable = availableDates.includes(format(day, 'yyyy-MM-dd'));
+                const cloneDay = new Date(day);
                 
                 days.push(
                     <div
                         key={day.toString()}
-                        className={`relative h-14 cursor-pointer border-r border-b border-slate-50 p-1 flex flex-col items-center justify-center transition-all hover:bg-indigo-50/50 ${
-                            !isCurrentMonth ? 'bg-slate-50/30 text-slate-300' : 'text-slate-700'
+                        className={`relative h-14 p-1 flex flex-col items-center justify-center transition-all ${
+                            isPast 
+                                ? 'bg-slate-50/50 cursor-not-allowed opacity-40' 
+                                : 'cursor-pointer hover:bg-indigo-50/50'
+                        } ${
+                            !isCurrentMonth ? 'text-slate-300' : 'text-slate-700'
                         } ${isSelected ? 'bg-indigo-100/50 ring-1 ring-inset ring-indigo-500 z-10' : ''} ${
                             isAvailable && isCurrentMonth && !isSelected ? 'bg-emerald-50/60' : ''
                         }`}
-                        onClick={() => setSelectedDate(cloneDay)}
+                        onClick={() => {
+                            if (isPast) {
+                                toast.error("Can't select a date in the past", {
+                                    icon: <AlertCircle size={18} className="text-rose-500" />,
+                                    style: {
+                                        borderRadius: '12px',
+                                        background: '#334155',
+                                        color: '#fff',
+                                        fontSize: '14px',
+                                        fontWeight: '600'
+                                    }
+                                });
+                                return;
+                            }
+                            setSelectedDate(cloneDay);
+                        }}
                     >
                         <span className={`text-sm font-semibold select-none ${isSelected ? 'text-indigo-600' : ''}`}>
                             {format(day, 'd')}

@@ -26,6 +26,7 @@ class SystemDemoSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $admin->assignRole('admin');
 
         // 2. Create 30 Services
         $serviceTypes = [
