@@ -52,6 +52,8 @@ jobs:
           rm -rf bootstrap/cache/*.php
           # Remove old builds (to prevent accumulating hashed files)
           rm -rf public/build
+          # Remove vendor to free up massive space (safe because composer install runs later)
+          rm -rf vendor
           # Remove accidental node_modules if they were synced previously
           rm -rf node_modules
 
