@@ -93,29 +93,38 @@ jobs:
             echo "Please configure .env manually on cPanel File Manager."
           fi
           
-          # 2. Robust Composer Detection & Atomic Install
+          # 2. Composer Detection & Automated Fallback
           echo "Detecting Composer..."
-          COMPOSER_PATH=""
-          for path in /usr/local/bin/composer /opt/cpanel/composer/bin/composer /usr/bin/composer ./composer.phar; do
-            if [ -f "$path" ]; then
-              COMPOSER_PATH=$path
-              break
+          COMPOSER_CMD=""
+          
+          # Try global command
+          if command -v composer >/dev/null 2>&1; then
+            COMPOSER_CMD="composer"
+          fi
+          
+          # Try common paths if global failed
+          if [ -z "$COMPOSER_CMD" ]; then
+            for path in /usr/local/bin/composer /opt/cpanel/composer/bin/composer /usr/bin/composer /usr/local/php83/bin/composer; do
+              if [ -x "$path" ]; then
+                COMPOSER_CMD="$path"
+                break
+              fi
+            done
+          fi
+          
+          # Final fallback: download composer.phar
+          if [ -z "$COMPOSER_CMD" ]; then
+            if [ ! -f "composer.phar" ]; then
+              echo "Composer not found. Downloading composer.phar..."
+              curl -sS https://getcomposer.org/installer | php
             fi
-          done
-
-          if [ -z "$COMPOSER_PATH" ] && command -v composer >/dev/null 2>&1; then
-            COMPOSER_PATH=$(command -v composer)
+            COMPOSER_CMD="php composer.phar"
           fi
 
-          if [ ! -z "$COMPOSER_PATH" ]; then
-            echo "Found Composer at: $COMPOSER_PATH"
-            echo "Atomic vendor cleanup and re-install..."
-            rm -rf vendor
-            php "$COMPOSER_PATH" install --no-dev --optimize-autoloader --no-interaction --no-progress
-          else
-            echo "::error ::Composer NOT FOUND on server! Please check /home/forahiao/public_html/flowslot.forahia.org.ng or contact hosting support."
-            exit 1
-          fi
+          echo "Using composer: $COMPOSER_CMD"
+          echo "Atomic vendor cleanup and re-install..."
+          rm -rf vendor
+          $COMPOSER_CMD install --no-dev --optimize-autoloader --no-interaction --no-progress
           
           # 4. Laravel Optimization & Database
           php artisan config:clear
