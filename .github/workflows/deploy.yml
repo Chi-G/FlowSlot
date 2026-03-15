@@ -86,29 +86,15 @@ jobs:
           mkdir -p bootstrap/cache
           chmod -R 775 storage bootstrap/cache
           
+          # 3. Basic .env Setup (Manual configuration on server recommended)
           if [ ! -f .env ]; then
             echo "::warning ::.env file NOT FOUND on server! Cloning from .env.example..."
             cp .env.example .env
+            echo "Please configure .env manually on cPanel File Manager."
           fi
           
           # 2. Install Composer Dependencies on server
           composer install --no-dev --optimize-autoloader --no-interaction --no-progress
-          
-          # 3. Robust .env Update (Ensures keys exist before sed)
-          update_env() {
-            local key=$1
-            local value=$2
-            if [ ! -z "$value" ]; then
-              grep -q "^${key}=" .env && sed -i "s|^${key}=.*|${key}=${value}|" .env || echo "${key}=${value}" >> .env
-            fi
-          }
-
-          update_env "PUSHER_APP_ID" "$PUSHER_APP_ID"
-          update_env "PUSHER_APP_KEY" "$PUSHER_APP_KEY"
-          update_env "PUSHER_APP_SECRET" "$PUSHER_APP_SECRET"
-          update_env "PUSHER_APP_CLUSTER" "\"$PUSHER_APP_CLUSTER\""
-          update_env "DB_DATABASE" "$DB_DATABASE"
-          update_env "BROADCAST_CONNECTION" "pusher"
           
           # 4. Laravel Optimization & Database
           php artisan config:clear
