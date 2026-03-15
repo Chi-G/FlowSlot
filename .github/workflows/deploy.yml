@@ -52,8 +52,6 @@ jobs:
           rm -rf bootstrap/cache/*.php
           # Remove old builds (to prevent accumulating hashed files)
           rm -rf public/build
-          # Remove vendor to free up massive space (safe because composer install runs later)
-          rm -rf vendor
           # Remove accidental node_modules if they were synced previously
           rm -rf node_modules
 
@@ -95,8 +93,29 @@ jobs:
             echo "Please configure .env manually on cPanel File Manager."
           fi
           
-          # 2. Install Composer Dependencies on server
-          composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+          # 2. Robust Composer Detection & Atomic Install
+          echo "Detecting Composer..."
+          COMPOSER_PATH=""
+          for path in /usr/local/bin/composer /opt/cpanel/composer/bin/composer /usr/bin/composer ./composer.phar; do
+            if [ -f "$path" ]; then
+              COMPOSER_PATH=$path
+              break
+            fi
+          done
+
+          if [ -z "$COMPOSER_PATH" ] && command -v composer >/dev/null 2>&1; then
+            COMPOSER_PATH=$(command -v composer)
+          fi
+
+          if [ ! -z "$COMPOSER_PATH" ]; then
+            echo "Found Composer at: $COMPOSER_PATH"
+            echo "Atomic vendor cleanup and re-install..."
+            rm -rf vendor
+            php "$COMPOSER_PATH" install --no-dev --optimize-autoloader --no-interaction --no-progress
+          else
+            echo "::error ::Composer NOT FOUND on server! Please check /home/forahiao/public_html/flowslot.forahia.org.ng or contact hosting support."
+            exit 1
+          fi
           
           # 4. Laravel Optimization & Database
           php artisan config:clear
