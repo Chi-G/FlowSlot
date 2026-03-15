@@ -23,6 +23,8 @@ export default function Index({ services }: Props) {
         interval_minutes: 30,
     });
 
+    const today = new Date().toISOString().split('T')[0];
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('admin.slots.store'));
@@ -71,6 +73,7 @@ export default function Index({ services }: Props) {
                                     <input 
                                         type="date"
                                         required
+                                        min={today}
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-slate-700 shadow-sm"
                                         value={data.start_date}
                                         onChange={e => setData('start_date', e.target.value)}
@@ -86,6 +89,7 @@ export default function Index({ services }: Props) {
                                     <input 
                                         type="date"
                                         required
+                                        min={data.start_date || today}
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium text-slate-700 shadow-sm"
                                         value={data.end_date}
                                         onChange={e => setData('end_date', e.target.value)}
