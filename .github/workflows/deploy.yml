@@ -48,7 +48,10 @@ jobs:
           # Remove logs and cache to free up space
           rm -rf storage/logs/*.log
           rm -rf storage/framework/cache/data/*
+          rm -rf storage/framework/views/*.php
           rm -rf bootstrap/cache/*.php
+          # Remove old builds (to prevent accumulating hashed files)
+          rm -rf public/build
           # Remove accidental node_modules if they were synced previously
           rm -rf node_modules
 
