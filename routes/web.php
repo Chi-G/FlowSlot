@@ -41,6 +41,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/test-mail', function () {
         $user = auth()->user();
         $mailer = config('mail.default');
+        $host = config('mail.mailers.smtp.host');
+        $smtpUser = config('mail.mailers.smtp.username');
         $testEmail = request('email', $user->email);
         
         try {
@@ -48,9 +50,21 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
             \Illuminate\Support\Facades\Notification::route('mail', $testEmail)
                 ->notifyNow(new \App\Notifications\BookingConfirmedNotification(\App\Models\Appointment::latest()->first() ?? new \App\Models\Appointment()));
             
-            return "Diagnostic: [Sync] Test email successfully delivered to SMTP server for <b>{$testEmail}</b>. (Using {$mailer} driver). If it's not in your inbox, check Spam.";
+            return "<h3>Diagnostic Result: SUCCESS</h3>" .
+                   "<p>The application successfully connected to the SMTP server and handed over the mail.</p>" .
+                   "<b>Recipient:</b> {$testEmail}<br>" .
+                   "<b>SMTP Host:</b> <code style='color:blue'>{$host}</code><br>" .
+                   "<b>SMTP User:</b> {$smtpUser}<br>" .
+                   "<b>Driver:</b> {$mailer}<br><br>" .
+                   "<b>If you don't see it in Gmail:</b><br>" .
+                   "1. Check Spam.<br>" .
+                   "2. If the Host above is <u>mailtrap.io</u>, it's NOT going to Gmail (check Mailtrap).<br>" .
+                   "3. If the Host is your domain, then Gmail is rejecting it (usually SPF/DKIM issues).";
         } catch (\Exception $e) {
-            return "Diagnostic: [Sync] Failed to send email via SMTP to <b>{$testEmail}</b>: " . $e->getMessage() . " (Driver: {$mailer})";
+            return "<h3>Diagnostic Result: FAILED</h3>" .
+                   "<b>Target Recipient:</b> {$testEmail}<br>" .
+                   "<b>SMTP Host:</b> <code style='color:red'>{$host}</code><br>" .
+                   "<b>Error:</b> " . $e->getMessage();
         }
     })->name('test-mail');
 });
