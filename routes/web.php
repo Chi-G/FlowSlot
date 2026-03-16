@@ -37,6 +37,17 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+
+    Route::get('/test-mail', function () {
+        $user = auth()->user();
+        try {
+            \Illuminate\Support\Facades\Notification::route('mail', $user->email)
+                ->notify(new \App\Notifications\BookingConfirmedNotification(\App\Models\Appointment::latest()->first() ?? new \App\Models\Appointment()));
+            return "Test email sent to {$user->email}. Check your inbox/logs.";
+        } catch (\Exception $e) {
+            return "Failed to send email: " . $e->getMessage();
+        }
+    })->name('test-mail');
 });
 
 Route::prefix('admin')->group(function () {
