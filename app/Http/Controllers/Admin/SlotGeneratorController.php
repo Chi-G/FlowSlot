@@ -40,7 +40,11 @@ class SlotGeneratorController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Slots generated successfully')
+            new OA\Response(
+                response: 200, 
+                description: 'Slots generated successfully',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function store(Request $request, TimeSlotGenerator $generator)
@@ -62,6 +66,13 @@ class SlotGeneratorController extends Controller
             $validated['end_time'],
             $validated['interval_minutes']
         );
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Time slots generated successfully.',
+                'redirect' => route('admin.dashboard')
+            ]);
+        }
 
         return redirect()->route('admin.dashboard')->with('success', 'Time slots generated successfully.');
     }

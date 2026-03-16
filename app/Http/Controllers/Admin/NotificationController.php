@@ -16,12 +16,16 @@ class NotificationController extends Controller
         tags: ['Admin'],
         summary: 'Get all notifications for the authenticated admin',
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function index(Request $request)
     {
-        $notifications = $request->user()->notifications()->paginate(15);
+        $notifications = $request->user()->notifications()->paginate(10);
 
         return Inertia::render('Admin/Notifications/Index', [
             'notifications' => $notifications
@@ -37,7 +41,11 @@ class NotificationController extends Controller
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'string'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Notification marked as read'),
+            new OA\Response(
+                response: 200, 
+                description: 'Notification marked as read',
+                content: new OA\JsonContent()
+            ),
             new OA\Response(response: 404, description: 'Notification not found')
         ]
     )]
@@ -58,7 +66,11 @@ class NotificationController extends Controller
         tags: ['Admin'],
         summary: 'Mark all notifications as read for the authenticated admin',
         responses: [
-            new OA\Response(response: 200, description: 'All notifications marked as read')
+            new OA\Response(
+                response: 200, 
+                description: 'All notifications marked as read',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function markAllAsRead(Request $request)

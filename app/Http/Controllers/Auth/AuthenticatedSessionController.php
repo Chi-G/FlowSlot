@@ -46,15 +46,31 @@ class AuthenticatedSessionController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Logged in successfully'),
+            new OA\Response(
+                response: 200, 
+                description: 'Logged in successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Logged in successfully'),
+                        new OA\Property(property: 'redirect', type: 'string', example: '/admin/dashboard')
+                    ]
+                )
+            ),
             new OA\Response(response: 401, description: 'Unauthorized')
         ]
     )]
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Logged in successfully',
+                'redirect' => route('dashboard', absolute: false)
+            ]);
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -68,16 +84,30 @@ class AuthenticatedSessionController extends Controller
         tags: ['Auth'],
         summary: 'Log out the current user',
         responses: [
-            new OA\Response(response: 200, description: 'Logged out successfully')
+            new OA\Response(
+                response: 200, 
+                description: 'Logged out successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Logged out successfully')
+                    ]
+                )
+            )
         ]
     )]
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Logged out successfully'
+            ]);
+        }
 
         return redirect('/');
     }

@@ -44,7 +44,11 @@ class ProfileController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Profile updated successfully')
+            new OA\Response(
+                response: 200, 
+                description: 'Profile updated successfully',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function update(ProfileUpdateRequest $request): RedirectResponse
@@ -56,6 +60,14 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Profile updated successfully.',
+                'user' => $request->user(),
+                'redirect' => route('profile.edit')
+            ]);
+        }
 
         return Redirect::route('profile.edit');
     }
@@ -78,7 +90,11 @@ class ProfileController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Account deleted successfully')
+            new OA\Response(
+                response: 200, 
+                description: 'Account deleted successfully',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function destroy(Request $request): RedirectResponse
@@ -95,6 +111,13 @@ class ProfileController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Account deleted successfully.',
+                'redirect' => '/'
+            ]);
+        }
 
         return Redirect::to('/');
     }

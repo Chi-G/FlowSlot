@@ -18,7 +18,11 @@ class ServiceController extends Controller
         tags: ['Admin'],
         summary: 'List all services managed by admin',
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function index(Request $request)
@@ -29,6 +33,15 @@ class ServiceController extends Controller
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
         })->paginate(10)->withQueryString();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'services' => $services,
+                'filters' => [
+                    'search' => $search
+                ]
+            ]);
+        }
 
         return Inertia::render('Admin/Services/Index', [
             'services' => $services,
@@ -63,7 +76,11 @@ class ServiceController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 201, description: 'Service created successfully')
+            new OA\Response(
+                response: 201, 
+                description: 'Service created successfully',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function store(Request $request)
@@ -77,7 +94,15 @@ class ServiceController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        Service::create($validated);
+        $service = Service::create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Service created successfully.',
+                'service' => $service,
+                'redirect' => route('admin.services.index')
+            ], 201);
+        }
 
         return redirect()->route('admin.services.index')->with('success', 'Service created successfully.');
     }
@@ -111,7 +136,11 @@ class ServiceController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Service updated successfully')
+            new OA\Response(
+                response: 200, 
+                description: 'Service updated successfully',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function update(Request $request, Service $service)
@@ -127,6 +156,14 @@ class ServiceController extends Controller
 
         $service->update($validated);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Service updated successfully.',
+                'service' => $service,
+                'redirect' => route('admin.services.index')
+            ]);
+        }
+
         return redirect()->route('admin.services.index')->with('success', 'Service updated successfully.');
     }
 
@@ -139,12 +176,24 @@ class ServiceController extends Controller
             new OA\Parameter(name: 'service', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Service deleted successfully')
+            new OA\Response(
+                response: 200, 
+                description: 'Service deleted successfully',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function destroy(Service $service)
     {
         $service->delete();
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'message' => 'Service deleted successfully.',
+                'redirect' => route('admin.services.index')
+            ]);
+        }
+
         return redirect()->route('admin.services.index')->with('success', 'Service deleted successfully.');
     }
 }

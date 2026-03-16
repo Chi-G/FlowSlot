@@ -26,8 +26,9 @@ class BookingController extends Controller
         ],
         responses: [
             new OA\Response(
-                response: 200,
-                description: 'Successful operation'
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
             )
         ]
     )]
@@ -44,8 +45,16 @@ class BookingController extends Controller
             ->pluck('category')
             ->prepend('All');
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'services' => $query->paginate(10)->withQueryString(),
+                'categories' => $categories,
+                'selectedCategory' => $request->query('category', 'All'),
+            ]);
+        }
+
         return Inertia::render('Public/Services', [
-            'services' => $query->paginate(12)->withQueryString(),
+            'services' => $query->paginate(10)->withQueryString(),
             'categories' => $categories,
             'selectedCategory' => $request->query('category', 'All'),
         ]);
@@ -60,11 +69,21 @@ class BookingController extends Controller
             new OA\Parameter(name: 'service', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function show(Service $service)
     {
+        if (request()->wantsJson()) {
+            return response()->json([
+                'service' => $service,
+            ]);
+        }
+
         return Inertia::render('Book/Show', [
             'service' => $service,
         ]);
@@ -80,7 +99,11 @@ class BookingController extends Controller
             new OA\Parameter(name: 'date', in: 'query', required: true, schema: new OA\Schema(type: 'string', format: 'date'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function getSlots(Service $service, Request $request)
@@ -106,7 +129,11 @@ class BookingController extends Controller
             new OA\Parameter(name: 'month', in: 'query', required: true, schema: new OA\Schema(type: 'string', description: 'YYYY-MM format'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function getAvailableDates(Service $service, Request $request)
@@ -132,13 +159,24 @@ class BookingController extends Controller
             new OA\Parameter(name: 'slot', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function confirm(Service $service, TimeSlot $slot)
     {
         if ($slot->is_booked || $slot->service_id != $service->id || $slot->start_time < now()) {
             return redirect()->route('booking.show', $service)->with('error', 'This slot is no longer available or is in the past.');
+        }
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'service' => $service,
+                'slot' => $slot,
+            ]);
         }
 
         return Inertia::render('Book/Confirm', [
@@ -166,7 +204,16 @@ class BookingController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 201, description: 'Appointment booked successfully'),
+            new OA\Response(
+                response: 200, 
+                description: 'Appointment booked successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(property: 'redirect', type: 'string')
+                    ]
+                )
+            ),
             new OA\Response(response: 400, description: 'Bad request')
         ]
     )]
@@ -182,8 +229,19 @@ class BookingController extends Controller
 
         try {
             $appointment = $bookingService->book($validated);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Appointment booked successfully',
+                    'redirect' => route('booking.success', $appointment->reference_number)
+                ]);
+            }
+
             return redirect()->route('booking.success', $appointment->reference_number);
         } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['error' => $e->getMessage()], 400);
+            }
             return back()->with('error', $e->getMessage());
         }
     }
@@ -197,7 +255,11 @@ class BookingController extends Controller
             new OA\Parameter(name: 'reference', in: 'path', required: true, schema: new OA\Schema(type: 'string'))
         ],
         responses: [
-            new OA\Response(response: 200, description: 'Successful operation')
+            new OA\Response(
+                response: 200, 
+                description: 'Successful operation',
+                content: new OA\JsonContent()
+            )
         ]
     )]
     public function success($reference)
@@ -205,6 +267,12 @@ class BookingController extends Controller
         $appointment = \App\Models\Appointment::with(['service', 'timeSlot'])
             ->where('reference_number', $reference)
             ->firstOrFail();
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'appointment' => $appointment,
+            ]);
+        }
 
         return Inertia::render('Book/Success', [
             'appointment' => $appointment,
