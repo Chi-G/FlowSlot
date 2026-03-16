@@ -19,9 +19,9 @@ class SystemDemoSeeder extends Seeder
     {
         // 1. Create Admin User
         $admin = User::updateOrCreate(
-            ['email' => 'admin@flowslot.com'],
+            ['email' => 'admin@flowslot.forahia.org.ng'],
             [
-                'name' => 'Elite Admin',
+                'name' => 'Chijindu Admin',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ]

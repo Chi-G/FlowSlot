@@ -27,7 +27,7 @@ class SendBookingNotifications
         
         // If no specifically assigned roles, notify the first user or based on env
         if ($admins->isEmpty()) {
-            $admins = User::where('email', 'admin@flowslot.com')->get();
+            $admins = User::where('email', 'admin@flowslot.forahia.org.ng')->get();
         }
 
         if ($admins->isNotEmpty()) {

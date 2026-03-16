@@ -50,16 +50,21 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
             \Illuminate\Support\Facades\Notification::route('mail', $testEmail)
                 ->notifyNow(new \App\Notifications\BookingConfirmedNotification(\App\Models\Appointment::latest()->first() ?? new \App\Models\Appointment()));
             
-            return "<h3>Diagnostic Result: SUCCESS</h3>" .
-                   "<p>The application successfully connected to the SMTP server and handed over the mail.</p>" .
-                   "<b>Recipient:</b> {$testEmail}<br>" .
-                   "<b>SMTP Host:</b> <code style='color:blue'>{$host}</code><br>" .
+            return "<h3>Diagnostic Result: <span style='color:green'>SUCCESS</span></h3>" .
+                   "<p>The application successfully connected to your SMTP server and the server accepted the mail for delivery (250 OK).</p>" .
+                   "<b>Target Recipient:</b> <u>{$testEmail}</u><br>" .
+                   "<b>SMTP Host:</b> <code>{$host}</code><br>" .
                    "<b>SMTP User:</b> {$smtpUser}<br>" .
                    "<b>Driver:</b> {$mailer}<br><br>" .
-                   "<b>If you don't see it in Gmail:</b><br>" .
-                   "1. Check Spam.<br>" .
-                   "2. If the Host above is <u>mailtrap.io</u>, it's NOT going to Gmail (check Mailtrap).<br>" .
-                   "3. If the Host is your domain, then Gmail is rejecting it (usually SPF/DKIM issues).";
+                   "<div style='background:#f4f4f4; padding:15px; border-left:5px solid #2563eb;'>" .
+                   "<h4>If you STILL don't see it in Gmail (Common Live Server Fixes):</h4>" .
+                   "<ul>" .
+                   "<li><b>Check Spam:</b> Gmail often flags new domain mail as spam.</li>" .
+                   "<li><b>Switch to TLS:</b> In your live <code>.env</code>, try changing:<br><code>MAIL_PORT=587</code><br><code>MAIL_ENCRYPTION=tls</code></li>" .
+                   "<li><b>SPF Records:</b> Your hosting domain (forahia.org.ng) might lack an 'SPF' record. Without this, Gmail often <u>silently deletes</u> the mail before it even hits Spam.</li>" .
+                   "<li><b>Webmail Check:</b> Log in to <code>admin@flowslot.forahia.org.ng</code> webmail and see if the test email appears in the 'Sent' folder.</li>" .
+                   "</ul>" .
+                   "</div>";
         } catch (\Exception $e) {
             return "<h3>Diagnostic Result: FAILED</h3>" .
                    "<b>Target Recipient:</b> {$testEmail}<br>" .
