@@ -92,9 +92,14 @@ jobs:
           # Bypass system temp directory for PHP
           export TMPDIR=$(pwd)/storage/framework/cache
           
-          php artisan migrate --force
-          php artisan db:seed --class=RoleSeeder --force
+          # Clear caches first to free memory
+          php artisan config:clear
+          php artisan cache:clear
           
+          # Run migration and seeding with increased memory limit
+          php -d memory_limit=512M artisan migrate --seed --force
+          
+          # Re-cache for performance
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
