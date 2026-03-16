@@ -40,12 +40,17 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     Route::get('/test-mail', function () {
         $user = auth()->user();
+        $mailer = config('mail.default');
+        $testEmail = request('email', $user->email);
+        
         try {
-            \Illuminate\Support\Facades\Notification::route('mail', $user->email)
-                ->notify(new \App\Notifications\BookingConfirmedNotification(\App\Models\Appointment::latest()->first() ?? new \App\Models\Appointment()));
-            return "Test email sent to {$user->email}. Check your inbox/logs.";
+            // Use notifyNow to ensure it's synchronous and gives immediate feedback
+            \Illuminate\Support\Facades\Notification::route('mail', $testEmail)
+                ->notifyNow(new \App\Notifications\BookingConfirmedNotification(\App\Models\Appointment::latest()->first() ?? new \App\Models\Appointment()));
+            
+            return "Diagnostic: [Sync] Test email successfully delivered to SMTP server for <b>{$testEmail}</b>. (Using {$mailer} driver). If it's not in your inbox, check Spam.";
         } catch (\Exception $e) {
-            return "Failed to send email: " . $e->getMessage();
+            return "Diagnostic: [Sync] Failed to send email via SMTP to <b>{$testEmail}</b>: " . $e->getMessage() . " (Driver: {$mailer})";
         }
     })->name('test-mail');
 });
