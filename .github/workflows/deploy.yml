@@ -20,7 +20,7 @@ jobs:
         coverage: none
 
     - name: Install Composer Dependencies
-      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader --no-dev
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -49,6 +49,7 @@ jobs:
           rm -rf storage/logs/*.log
           rm -rf storage/framework/cache/data/*
           rm -rf storage/framework/views/*.php
+          rm -rf storage/framework/sessions/*
           rm -rf bootstrap/cache/*.php
           # Remove old builds (to prevent accumulating hashed files)
           rm -rf public/build
