@@ -19,6 +19,61 @@
         }
     ],
     "paths": {
+        "/admin/notifications": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all notifications for the authenticated admin",
+                "operationId": "getNotifications",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/admin/notifications/{id}/read": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Mark a specific notification as read",
+                "operationId": "markNotificationAsRead",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notification marked as read"
+                    },
+                    "404": {
+                        "description": "Notification not found"
+                    }
+                }
+            }
+        },
+        "/admin/notifications/mark-all-read": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Mark all notifications as read for the authenticated admin",
+                "operationId": "markAllNotificationsAsRead",
+                "responses": {
+                    "200": {
+                        "description": "All notifications marked as read"
+                    }
+                }
+            }
+        },
         "/admin/services": {
             "get": {
                 "tags": [
@@ -212,7 +267,7 @@
                 }
             }
         },
-        "/login": {
+        "/admin/login": {
             "post": {
                 "tags": [
                     "Auth"
@@ -257,7 +312,7 @@
                 }
             }
         },
-        "/logout": {
+        "/admin/logout": {
             "post": {
                 "tags": [
                     "Auth"
@@ -277,8 +332,18 @@
                 "tags": [
                     "Public"
                 ],
-                "summary": "Get available services",
+                "summary": "Get available services with categorization",
                 "operationId": "getServices",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -333,6 +398,39 @@
                         "schema": {
                             "type": "string",
                             "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/available-dates/{service}": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Get dates with available slots for a given month",
+                "operationId": "getAvailableDates",
+                "parameters": [
+                    {
+                        "name": "service",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "month",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "description": "YYYY-MM format",
+                            "type": "string"
                         }
                     }
                 ],

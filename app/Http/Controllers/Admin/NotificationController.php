@@ -11,7 +11,7 @@ use OpenApi\Attributes as OA;
 class NotificationController extends Controller
 {
     #[OA\Get(
-        path: '/api/admin/notifications',
+        path: '/admin/notifications',
         operationId: 'getNotifications',
         tags: ['Admin'],
         summary: 'Get all notifications for the authenticated admin',
@@ -29,7 +29,7 @@ class NotificationController extends Controller
     }
 
     #[OA\Post(
-        path: '/api/admin/notifications/{id}/read',
+        path: '/admin/notifications/{id}/read',
         operationId: 'markNotificationAsRead',
         tags: ['Admin'],
         summary: 'Mark a specific notification as read',
@@ -53,7 +53,7 @@ class NotificationController extends Controller
     }
 
     #[OA\Post(
-        path: '/api/admin/notifications/mark-all-read',
+        path: '/admin/notifications/mark-all-read',
         operationId: 'markAllNotificationsAsRead',
         tags: ['Admin'],
         summary: 'Mark all notifications as read for the authenticated admin',
