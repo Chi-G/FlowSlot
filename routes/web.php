@@ -33,6 +33,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::patch('/appointments/{appointment}/status', [\App\Http\Controllers\Admin\AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
     Route::get('/slots/generate', [\App\Http\Controllers\Admin\SlotGeneratorController::class, 'index'])->name('slots.index');
     Route::post('/slots/generate', [\App\Http\Controllers\Admin\SlotGeneratorController::class, 'store'])->name('slots.store');
+
+    Route::get('/notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 });
 
 Route::prefix('admin')->group(function () {

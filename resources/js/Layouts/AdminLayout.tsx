@@ -1,5 +1,6 @@
 import React, { ReactNode, useState, useEffect } from 'react';
 import { Head, Link, usePage, router } from '@inertiajs/react';
+import NotificationDropdown from '../Components/NotificationDropdown';
 import ApplicationLogo from '../Components/ApplicationLogo';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -52,6 +53,13 @@ export default function AdminLayout({ children, title }: Props) {
         { label: 'Services', icon: Clock, href: route('admin.services.index'), active: route().current('admin.services.*') },
         { label: 'Generate Slots', icon: Clock, href: route('admin.slots.index'), active: route().current('admin.slots.*') },
         { label: 'Appointments', icon: Calendar, href: route('admin.appointments.index'), active: route().current('admin.appointments.*') },
+        { 
+            label: 'Notifications', 
+            icon: Bell, 
+            href: route('admin.notifications.index'), 
+            active: route().current('admin.notifications.*'),
+            badge: usePage().props.notifications ? (usePage().props.notifications as any).unreadCount : 0
+        },
     ];
 
     const handleLogout = () => {
@@ -113,7 +121,16 @@ export default function AdminLayout({ children, title }: Props) {
                                 "h-5 w-5 transition-colors", 
                                 item.active ? "text-indigo-600" : "text-slate-400 group-hover:text-indigo-600"
                             )} />
-                            {!isSidebarCollapsed && <span>{item.label}</span>}
+                            {!isSidebarCollapsed && (
+                                <div className="flex-1 flex items-center justify-between">
+                                    <span>{item.label}</span>
+                                    {item.label === 'Notifications' && (item as any).badge > 0 && (
+                                        <span className="bg-indigo-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full ring-2 ring-white">
+                                            {(item as any).badge}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                         </Link>
                     ))}
                 </div>
@@ -163,12 +180,8 @@ export default function AdminLayout({ children, title }: Props) {
                             </div>
                         )}
                     </div>
-
                     <div className="flex items-center gap-4">
-                        <button className="relative p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
-                            <Bell size={20} />
-                            <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-indigo-600 ring-2 ring-white"></span>
-                        </button>
+                        <NotificationDropdown />
                         <div className="h-8 w-[1px] bg-slate-200 mx-2" />
                         <h1 className="text-sm font-semibold text-slate-700">{title || 'Admin Dashboard'}</h1>
                     </div>
