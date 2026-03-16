@@ -21,7 +21,7 @@ class AppointmentController extends Controller
                       ->orWhere('customer_email', 'like', "%{$search}%");
             })
             ->orderBy('id', 'desc')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return Inertia::render('Admin/Appointments/Index', [

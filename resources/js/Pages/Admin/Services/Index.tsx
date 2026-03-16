@@ -6,6 +6,7 @@ import StatusBadge from '@/Components/StatusBadge';
 import Button from '@/Components/Button';
 import ConfirmationModal from '@/Components/ConfirmationModal';
 import TextInput from '@/Components/TextInput';
+import Pagination from '@/Components/Pagination';
 
 interface Service {
     id: number;
@@ -18,7 +19,10 @@ interface Service {
 }
 
 interface Props {
-    services: Service[];
+    services: {
+        data: Service[];
+        links: any[];
+    };
     filters: {
         search: string;
     };
@@ -123,14 +127,14 @@ export default function Index({ services, filters }: Props) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {services.length === 0 ? (
+                                {services.data.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="px-6 py-12 text-center text-slate-400">
                                             {search ? 'No services match your search.' : 'No services found. Start by adding your first service.'}
                                         </td>
                                     </tr>
                                 ) : (
-                                    services.map((service) => (
+                                    services.data.map((service) => (
                                         <tr key={service.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
@@ -153,7 +157,7 @@ export default function Index({ services, filters }: Props) {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link href={route('admin.services.edit', service.id)}>
                                                         <button className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition-all shadow-sm" title="Edit Service">
-                                                            <Edit2 size={16} />
+                                                                <Edit2 size={16} />
                                                         </button>
                                                     </Link>
                                                     <button 
@@ -172,6 +176,8 @@ export default function Index({ services, filters }: Props) {
                         </table>
                     </div>
                 </div>
+
+                <Pagination links={services.links} />
             </div>
         </AdminLayout>
     );

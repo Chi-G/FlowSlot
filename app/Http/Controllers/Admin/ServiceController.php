@@ -28,7 +28,7 @@ class ServiceController extends Controller
         $services = Service::when($search, function ($query, $search) {
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
-        })->get();
+        })->paginate(10)->withQueryString();
 
         return Inertia::render('Admin/Services/Index', [
             'services' => $services,

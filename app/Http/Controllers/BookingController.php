@@ -147,7 +147,7 @@ class BookingController extends Controller
         ]);
     }
 
-    #[OA\Post(
+    #[OA\Post( 
         path: '/api/book',
         operationId: 'bookAppointment',
         tags: ['Public'],
