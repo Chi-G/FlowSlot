@@ -69,27 +69,27 @@ jobs:
         rm: false
         timeout: 10m
 
-      - name: Post-Deployment Commands
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.WHOGOHOST_SSH_HOST }}
-          username: ${{ secrets.WHOGOHOST_SSH_USER }}
-          port: ${{ secrets.WHOGOHOST_SSH_PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/forahiao/public_html/flowslot.forahia.org.ng
-            
-            # 1. Directory Setup & Permissions
-            echo "Initializing directories..."
-            mkdir -p storage/framework/{sessions,views,cache}
-            mkdir -p bootstrap/cache
-            chmod -R 777 storage bootstrap/cache
-            
-            # 2. Database & Optimization
-            echo "Running migrations and optimization..."
-            php artisan migrate --force
-            php artisan db:seed --class=RoleSeeder --force
-            
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+    - name: Post-Deployment Commands
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
+        username: ${{ secrets.WHOGOHOST_SSH_USER }}
+        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          
+          # 1. Directory Setup & Permissions
+          echo "Initializing directories..."
+          mkdir -p storage/framework/{sessions,views,cache}
+          mkdir -p bootstrap/cache
+          chmod -R 777 storage bootstrap/cache
+          
+          # 2. Database & Optimization
+          echo "Running migrations and optimization..."
+          php artisan migrate --force
+          php artisan db:seed --class=RoleSeeder --force
+          
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
