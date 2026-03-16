@@ -45,6 +45,8 @@ jobs:
         command_timeout: 10m
         script: |
           cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          # 1. EMERGENCY CLEANUP: Remove vendor to free up ~100MB+ for sync
+          rm -rf vendor
           # Remove logs and cache to free up space
           rm -rf storage/logs/*.log
           rm -rf storage/framework/cache/data/*
@@ -78,15 +80,27 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /home/forahiao/public_html/flowslot.forahia.org.ng
+
+          # 1. Programmatic .env Repair
+          echo "Repairing .env configuration..."
+          if [ -f .env ]; then
+            # Replace the wrong database name (password) with the correct one
+            sed -i 's/DB_DATABASE=m77D{!]Op?qYjkCc/DB_DATABASE=forahiao_flowslot/g' .env
+            # Ensure the wrong one isn't lingering as a duplicate
+            sed -i 's/DB_DATABASE="m77D{!]Op?qYjkCc"/DB_DATABASE=forahiao_flowslot/g' .env
+          fi
           
-          # 1. Directory Setup & Permissions
-          echo "Initializing directories..."
+          # 2. Directory Setup & Permissions
+          echo "Initializing directories & granting full write access..."
           mkdir -p storage/framework/{sessions,views,cache}
           mkdir -p bootstrap/cache
           chmod -R 777 storage bootstrap/cache
           
-          # 2. Database & Optimization
+          # 3. Database & Optimization
           echo "Running migrations and optimization..."
+          # Bypass system temp directory for PHP
+          export TMPDIR=$(pwd)/storage/framework/cache
+          
           php artisan migrate --force
           php artisan db:seed --class=RoleSeeder --force
           
