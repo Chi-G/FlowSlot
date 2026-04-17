@@ -4,10 +4,10 @@ import InputLabel from '@/Components/InputLabel';
 import Button from '@/Components/Button'; // Using our consistent Button component
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock as LockIcon, ArrowRight, UserCheck } from 'lucide-react';
 
 export default function Login({
     status,
@@ -16,11 +16,24 @@ export default function Login({
     status?: string;
     canResetPassword: boolean;
 }) {
+    const { app_env } = usePage().props as any;
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
         remember: false as boolean,
     });
+
+    const handleDemoLogin = () => {
+        const demoEmail = app_env === 'local' 
+            ? 'admin@flowslot.com' 
+            : 'admin@flowslot.forahia.org.ng';
+            
+        setData({
+            ...data,
+            email: demoEmail,
+            password: 'password',
+        });
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -93,7 +106,7 @@ export default function Login({
                     </div>
                     <div className="relative group">
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                            <Lock size={18} />
+                            <LockIcon size={18} />
                         </div>
                         <TextInput
                             id="password"
@@ -135,6 +148,7 @@ export default function Login({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
+                    className="space-y-4"
                 >
                     <Button 
                         type="submit"
@@ -143,6 +157,24 @@ export default function Login({
                     >
                         Sign in to Dashboard
                         <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </Button>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-slate-200" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white px-2 text-slate-400 font-medium italic">or try the demo</span>
+                        </div>
+                    </div>
+
+                    <Button 
+                        type="button"
+                        onClick={handleDemoLogin}
+                        className="w-full h-12 bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-50 font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
+                    >
+                        <UserCheck size={18} />
+                        Fill Demo Credentials
                     </Button>
                 </motion.div>
                 
