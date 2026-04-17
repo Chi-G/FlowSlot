@@ -23,8 +23,12 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         if ($this->app->environment('production')) {
-            \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
+            $rootUrl = config('app.url');
+            \Illuminate\Support\Facades\URL::forceRootUrl($rootUrl);
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            
+            // Force asset URL to match app URL to fix subdirectory issues
+            config(['app.asset_url' => $rootUrl]);
         }
 
         \Illuminate\Support\Facades\Event::listen(
