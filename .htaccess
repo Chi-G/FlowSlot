@@ -6,8 +6,8 @@
     RewriteCond %{DOCUMENT_ROOT}/flowslot/public/$1 -f
     RewriteRule ^(.*)$ public/$1 [L]
 
-    # 2. Redirect everything else (API, routes) to our public index.php
+    # 2. Redirect everything else (API, routes) to our root proxy index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/index.php [L]
+    RewriteRule ^ index.php [L]
 </IfModule>
