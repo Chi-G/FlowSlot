@@ -48,7 +48,7 @@ export default function PublicLayout({ children, title }: Props) {
             <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/20 bg-white/40 backdrop-blur-2xl">
                 <div className="mx-auto max-w-[1800px] px-6 sm:px-12 lg:px-20">
                     <div className="flex h-16 justify-between items-center">
-                        <Link href="/" className="flex items-center gap-3 group">
+                        <Link href={route('booking.index')} className="flex items-center gap-3 group">
                             <ApplicationLogo className="h-10 w-auto rounded-lg shadow-sm transition-transform group-hover:scale-105" />
                             <span className="text-xl font-bold tracking-tight text-slate-900">
                                 Flow<span className="text-indigo-600">Slot</span>
@@ -88,7 +88,7 @@ export default function PublicLayout({ children, title }: Props) {
                     className="md:hidden overflow-hidden border-t border-slate-100 bg-white"
                 >
                     <div className="flex flex-col gap-4 p-4">
-                        <Link href="/" className="text-lg font-medium text-slate-600">Home</Link>
+                        <Link href={route('booking.index')} className="text-lg font-medium text-slate-600">Home</Link>
                         <Link href={route('services')} className="text-lg font-medium text-slate-600">Services</Link>
                         <Link href={route('login')} className="rounded-lg bg-indigo-600 p-3 text-center text-white font-semibold">Admin Portal</Link>
                     </div>

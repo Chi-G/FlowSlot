@@ -18,7 +18,7 @@ export default function Guest({ children }: PropsWithChildren) {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <Link href="/" className="mb-12 block w-max">
+                        <Link href={route('booking.index')} className="mb-12 block w-max">
                             <ApplicationLogo className="h-20 w-auto rounded-xl shadow-lg" />
                         </Link>
                     </motion.div>
@@ -65,7 +65,7 @@ export default function Guest({ children }: PropsWithChildren) {
             {/* Right Side: Auth Form */}
             <div className="flex-1 flex items-center justify-center p-6 md:p-12 lg:p-24 bg-white relative">
                 <div className="md:hidden absolute top-8 left-8">
-                    <Link href="/">
+                    <Link href={route('booking.index')}>
                         <ApplicationLogo className="h-10 w-10" />
                     </Link>
                 </div>
