@@ -48,7 +48,7 @@ export default function Show({ service }: Props) {
     const fetchSlots = async (date: Date) => {
         setIsLoadingSlots(true);
         try {
-            const response = await axios.get(`/api/slots/${service.id}?date=${format(date, 'yyyy-MM-dd')}`);
+            const response = await axios.get(route('api.slots', { service: service.id, date: format(date, 'yyyy-MM-dd') }));
             setSlots(response.data);
         } catch (error) {
             console.error('Error fetching slots:', error);
@@ -59,7 +59,7 @@ export default function Show({ service }: Props) {
 
     const fetchAvailableDates = async (month: Date) => {
         try {
-            const response = await axios.get(`/api/available-dates/${service.id}?month=${format(month, 'yyyy-MM')}`);
+            const response = await axios.get(route('api.available-dates', { service: service.id, month: format(month, 'yyyy-MM') }));
             setAvailableDates(response.data);
         } catch (error) {
             console.error('Error fetching available dates:', error);
@@ -251,7 +251,7 @@ export default function Show({ service }: Props) {
                                 <Button 
                                     className="w-full py-4 text-base"
                                     disabled={!selectedSlot}
-                                    onClick={() => router.get(`/book/confirm/${service.id}/${selectedSlot?.id}`)}
+                                    onClick={() => router.get(route('booking.confirm', { service: service.id, slot: selectedSlot?.id }))}
                                 >
                                     Continue to Booking
                                 </Button>

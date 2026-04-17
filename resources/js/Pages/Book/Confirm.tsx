@@ -35,7 +35,7 @@ export default function Confirm({ service, slot }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/api/book');
+        post(route('api.book'));
     };
 
     return (
