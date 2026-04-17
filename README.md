@@ -2,7 +2,7 @@
 
 FlowSlot is a premium, enterprise-grade scheduling platform designed for efficiency and seamless user experience. Manage bookings, services, and customer notifications in one beautifully designed workspace.
 
-**[Live Demo: flowslot.forahia.org.ng](https://flowslot.forahia.org.ng)**
+**[Live Demo: forahia.com/flowslot](https://forahia.com/flowslot)**
 
 ## Key Features
 

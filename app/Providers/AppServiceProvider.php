@@ -22,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
+        if ($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         \Illuminate\Support\Facades\Event::listen(
             \App\Events\BookingCreated::class,
             \App\Listeners\SendBookingNotifications::class,

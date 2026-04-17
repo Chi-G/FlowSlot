@@ -1,4 +1,4 @@
-name: Deploy to WhoGoHost
+name: Deploy to Hostinger
 
 on:
   push:
@@ -38,13 +38,14 @@ jobs:
     - name: Pre-Deployment Cleanup
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
-        username: ${{ secrets.WHOGOHOST_SSH_USER }}
-        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        host: ${{ secrets.HOSTINGER_SSH_HOST }}
+        username: ${{ secrets.HOSTINGER_SSH_USER }}
+        port: ${{ secrets.HOSTINGER_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.HOSTINGER_SSH_PASS }}
         command_timeout: 10m
         script: |
-          cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          cd /home/u157985566/domains/forahia.com/public_html/flowslot
           # 1. EMERGENCY CLEANUP: Remove vendor to free up ~100MB+ for sync
           rm -rf vendor
           # Remove logs and cache to free up space
@@ -61,12 +62,13 @@ jobs:
     - name: Sync Files via SCP
       uses: appleboy/scp-action@v0.1.7
       with:
-        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
-        username: ${{ secrets.WHOGOHOST_SSH_USER }}
-        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        host: ${{ secrets.HOSTINGER_SSH_HOST }}
+        username: ${{ secrets.HOSTINGER_SSH_USER }}
+        port: ${{ secrets.HOSTINGER_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.HOSTINGER_SSH_PASS }}
         source: ".,!node_modules,!.git,!.github,!.env"
-        target: "/home/forahiao/public_html/flowslot.forahia.org.ng"
+        target: "/home/u157985566/domains/forahia.com/public_html/flowslot"
         strip_components: 0
         rm: false
         timeout: 10m
@@ -74,12 +76,13 @@ jobs:
     - name: Post-Deployment Commands
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.WHOGOHOST_SSH_HOST }}
-        username: ${{ secrets.WHOGOHOST_SSH_USER }}
-        port: ${{ secrets.WHOGOHOST_SSH_PORT }}
+        host: ${{ secrets.HOSTINGER_SSH_HOST }}
+        username: ${{ secrets.HOSTINGER_SSH_USER }}
+        port: ${{ secrets.HOSTINGER_SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.HOSTINGER_SSH_PASS }}
         script: |
-          cd /home/forahiao/public_html/flowslot.forahia.org.ng
+          cd /home/u157985566/domains/forahia.com/public_html/flowslot
 
           # 1. Directory Setup & Permissions
           echo "Initializing directories & granting full write access..."
