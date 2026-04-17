@@ -29,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
             
             // Force asset URL to match app URL to fix subdirectory issues
             config(['app.asset_url' => $rootUrl]);
+
+            // Ensure the request URI is correctly identified for routing
+            if (isset($_SERVER['REQUEST_URI'])) {
+                $this->app['request']->server->set('REQUEST_URI', $_SERVER['REQUEST_URI']);
+            }
         }
 
         \Illuminate\Support\Facades\Event::listen(

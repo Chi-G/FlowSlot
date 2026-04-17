@@ -18,6 +18,17 @@ Route::get('/dashboard', function () {
 Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.index');
 Route::get('/services', [\App\Http\Controllers\BookingController::class, 'services'])->name('services');
 
+// Temporary debug route for 405 error
+Route::any('/debug-method', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'method' => $request->method(),
+        'uri' => $request->getRequestUri(),
+        'full_url' => $request->fullUrl(),
+        'app_url' => config('app.url'),
+        'asset_url' => config('app.asset_url'),
+    ]);
+});
+
 Route::get('/book/{service}', [\App\Http\Controllers\BookingController::class, 'show'])->name('booking.show');
 Route::get('/api/available-dates/{service}', [\App\Http\Controllers\BookingController::class, 'getAvailableDates']);
 Route::get('/api/slots/{service}', [\App\Http\Controllers\BookingController::class, 'getSlots']);
