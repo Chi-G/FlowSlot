@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-    base: '/flowslot/',
+    base: '/flowslot/build/',
     plugins: [
         laravel({
             input: 'resources/js/app.tsx',
