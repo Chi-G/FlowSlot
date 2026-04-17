@@ -11,8 +11,12 @@ use Inertia\Inertia;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->isMethod('HEAD')) {
+            return response('', 200);
+        }
+        
         return Inertia::render('Public/Home');
     }
 

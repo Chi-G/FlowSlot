@@ -15,17 +15,30 @@ Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.index');
+Route::any('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.index');
 Route::get('/services', [\App\Http\Controllers\BookingController::class, 'services'])->name('services');
 
-// Temporary debug route for 405 error
+// Enhanced debug route to inspect all routes for '/'
 Route::any('/debug-method', function (\Illuminate\Http\Request $request) {
+    $routes = collect(Route::getRoutes())->filter(function ($route) {
+        return $route->uri() === '/' || $route->uri() === '' || str_contains($route->uri(), 'debug');
+    })->map(function ($route) {
+        return [
+            'methods' => $route->methods(),
+            'uri' => $route->uri(),
+            'name' => $route->getName(),
+            'action' => $route->getActionName(),
+        ];
+    })->values();
+
     return response()->json([
         'method' => $request->method(),
         'uri' => $request->getRequestUri(),
         'full_url' => $request->fullUrl(),
         'app_url' => config('app.url'),
         'asset_url' => config('app.asset_url'),
+        'matching_routes' => $routes,
+        'server' => array_intersect_key($_SERVER, array_flip(['REQUEST_URI', 'QUERY_STRING', 'SCRIPT_NAME', 'PHP_SELF'])),
     ]);
 });
 
