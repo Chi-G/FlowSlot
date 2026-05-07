@@ -1,0 +1,54 @@
+services:
+    laravel.prod:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: flowslot-app:prod
+        restart: always
+        ports:
+            - '80:80'
+            - '443:443'
+            - '443:443/udp'
+        environment:
+            APP_ENV: production
+            APP_DEBUG: 'false'
+            LARAVEL_SAIL: 0
+            DB_HOST: mysql.prod
+            REDIS_HOST: redis.prod
+        volumes:
+            - 'caddy_data:/data'
+            - 'caddy_config:/config'
+        networks:
+            - flowslot-prod
+        depends_on:
+            - mysql.prod
+            - redis.prod
+    mysql.prod:
+        image: 'mysql:8.4'
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - 'flowslot-prod-mysql:/var/lib/mysql'
+        networks:
+            - flowslot-prod
+    redis.prod:
+        image: 'redis:alpine'
+        restart: always
+        volumes:
+            - 'flowslot-prod-redis:/data'
+        networks:
+            - flowslot-prod
+
+networks:
+    flowslot-prod:
+        driver: bridge
+
+volumes:
+    caddy_data:
+    caddy_config:
+    flowslot-prod-mysql:
+    flowslot-prod-redis:

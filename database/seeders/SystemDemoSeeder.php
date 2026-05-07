@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\TimeSlot;
 use App\Models\User;
-use App\Models\Appointment;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
 
 class SystemDemoSeeder extends Seeder
 {
@@ -41,7 +41,7 @@ class SystemDemoSeeder extends Seeder
         for ($i = 1; $i <= 30; $i++) {
             $type = $serviceTypes[($i - 1) % count($serviceTypes)];
             $name = $i > 6 ? "{$type[0]} Level {$i}" : $type[0];
-            
+
             $service = Service::updateOrCreate(
                 ['name' => $name],
                 [
@@ -58,13 +58,15 @@ class SystemDemoSeeder extends Seeder
             // Limiting to fewer slots per service to avoid database bloat with 30 services
             for ($d = 0; $d < 7; $d++) {
                 $date = Carbon::today()->addDays($d);
-                if ($date->isWeekend()) continue;
+                if ($date->isWeekend()) {
+                    continue;
+                }
 
                 // Create 4 slots per day per service
                 $startTime = $date->copy()->hour(10)->minute(0);
                 for ($s = 0; $s < 4; $s++) {
                     $slotEnd = $startTime->copy()->addMinutes($service->duration_minutes);
-                    
+
                     TimeSlot::updateOrCreate(
                         [
                             'service_id' => $service->id,
@@ -95,23 +97,25 @@ class SystemDemoSeeder extends Seeder
 
             if ($slot) {
                 $status = collect(['confirmed', 'pending', 'cancelled'])->random();
-                
+
                 $slot->update([
-                    'is_booked' => $status !== 'cancelled', 
-                    'status' => $status === 'confirmed' ? 'reserved' : ($status === 'pending' ? 'reserved' : 'available')
+                    'is_booked' => $status !== 'cancelled',
+                    'status' => $status === 'confirmed' ? 'reserved' : ($status === 'pending' ? 'reserved' : 'available'),
                 ]);
 
-                Appointment::create([
-                    'user_id' => $admin->id,
-                    'service_id' => $service->id,
-                    'time_slot_id' => $slot->id,
-                    'customer_name' => $names[$i],
-                    'customer_email' => strtolower(str_replace(' ', '.', $names[$i])) . '@example.com',
-                    'customer_phone' => '+1' . rand(100, 999) . rand(100, 999) . rand(1000, 9999),
-                    'status' => $status,
-                    'reference_number' => 'FS-' . strtoupper(bin2hex(random_bytes(4))),
-                    'created_at' => Carbon::now()->subDays(rand(0, 5)), // Some from previous days
-                ]);
+                Appointment::updateOrCreate(
+                    ['time_slot_id' => $slot->id],
+                    [
+                        'user_id' => $admin->id,
+                        'service_id' => $service->id,
+                        'customer_name' => $names[$i],
+                        'customer_email' => strtolower(str_replace(' ', '.', $names[$i])).'@example.com',
+                        'customer_phone' => '+1'.rand(100, 999).rand(100, 999).rand(1000, 9999),
+                        'status' => $status,
+                        'reference_number' => 'FS-'.strtoupper(bin2hex(random_bytes(4))),
+                        'created_at' => Carbon::now()->subDays(rand(0, 5)),
+                    ]
+                );
             }
         }
     }
